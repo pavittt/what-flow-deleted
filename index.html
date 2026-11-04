@@ -87,6 +87,27 @@ header .r{display:flex;gap:28px;font-variant-numeric:tabular-nums}
 .marq .tr span:nth-child(3n){color:#8b93ff;font-style:italic}
 
 /* manifesto */
+#film{position:fixed;inset:0;z-index:45;background:var(--paper);display:grid;grid-template-rows:auto 1fr auto;padding:calc(64px + env(safe-area-inset-top,0px)) clamp(16px,4vw,56px) calc(84px + env(safe-area-inset-bottom,0px));visibility:hidden;opacity:0}
+#film .fbar{display:flex;justify-content:space-between;align-items:center;gap:16px}
+#film .ftitle{display:flex;gap:18px;align-items:baseline;flex-wrap:wrap}
+#film .ftitle b{font:700 clamp(20px,2vw,30px)/1 var(--display);letter-spacing:-.03em}
+#film .fch{color:var(--raw)}
+#fclose{border:1px solid var(--ink);background:none;border-radius:999px;padding:9px 16px;font:500 14px var(--body);cursor:pointer;color:var(--ink)}
+#film .fstage{position:relative;display:grid;place-items:center;min-height:0}
+#film svg{width:min(100%,1100px);height:min(64svh,760px);overflow:visible;transition:transform .08s}
+#film svg.glitch{animation:gl .12s steps(2) infinite;filter:drop-shadow(5px 0 rgba(36,51,255,.75)) drop-shadow(-5px 0 rgba(12,12,13,.35))}
+@keyframes gl{0%{transform:translate(3px,-2px) skewX(-2deg)}50%{transform:translate(-4px,2px) skewX(2deg)}100%{transform:translate(2px,1px)}}
+#fend{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:18px;background:rgba(238,238,236,.9);opacity:0;visibility:hidden;padding:0 6%}
+#fend h3{margin:0;font:800 clamp(34px,5.6vw,96px)/.92 var(--display);letter-spacing:-.05em;max-width:18ch;text-wrap:balance}
+#fend .acts{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+#fsub{font:600 clamp(18px,2vw,30px)/1.25 var(--display);letter-spacing:-.02em;text-align:center;min-height:2.6em;max-width:36ch;margin:0 auto;text-wrap:balance}
+#fsub .f{color:var(--raw);font-style:italic}
+#fsub .o{color:rgba(12,12,13,.25)}
+#fprog{position:relative;height:3px;background:rgba(12,12,13,.12);margin-top:16px}
+#fprog i{position:absolute;left:0;top:0;bottom:0;background:var(--raw);width:0}
+#fprog span{position:absolute;top:-4px;width:1px;height:11px;background:var(--ink)}
+.pbtn.watch{background:var(--ink)}
+@media (max-width:760px){#film svg{height:44svh}#fsub{font-size:18px}}
 #dial{padding-block:16vh 12vh;border-top:1px solid rgba(12,12,13,.12)}
 #dial .kick{color:var(--mute);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:3vh}
 #dial h2{font:800 clamp(44px,8vw,140px)/.86 var(--display);letter-spacing:-.055em;margin:0 0 2vh;text-transform:uppercase}
@@ -356,6 +377,12 @@ footer .bar{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;m
   </div>
 </section>
 <div id="toast" role="status" aria-live="polite"></div>
+<div id="film" class="g" role="dialog" aria-modal="true" aria-label="Story film">
+  <div class="fbar"><div class="ftitle"><span class="lbl" id="fnum"></span><b id="fproj"></b><span class="lbl fch" id="fch">What I built</span></div><button id="fclose" type="button">Close · Esc</button></div>
+  <div class="fstage"><svg id="fsvg" viewBox="0 0 600 440" role="img" aria-label="Story illustration"></svg>
+    <div id="fend"><span class="lbl">What I kept</span><h3 id="fles"></h3><div class="acts"><button class="kbd" id="fnext" type="button">Next story →</button><button class="kbd" id="fagain" type="button">Watch again</button></div></div></div>
+  <div><p id="fsub" aria-live="off"></p><div id="fprog"><i></i><span style="left:30%"></span><span style="left:68%"></span></div><div class="lbl" style="display:flex;justify-content:space-between;margin-top:10px;color:var(--mute)"><span>Narrated by me · unedited voice note · the blue words are what Flow deletes</span><span id="ftime">0:00</span></div></div>
+</div>
 <div id="takes"></div>
 
 <section id="index" class="g">
@@ -458,7 +485,7 @@ TAKES.forEach((t,i)=>{
    <div class="tbody"><div class="stage">
      <div class="pA"><p>${t.what}</p><div class="facts">${t.facts.map(f=>`<span>${f}</span>`).join('')}</div></div>
      <div class="pB"><span class="lbl"><span class="offl">What Flow would cut · ${nf} fillers, every pause</span><span class="onl">What Wispr Flow actually wrote</span></span><p class="rawq">${raw}</p><p class="flowed">${t.flowed}</p>
-       <div class="play"><button class="pbtn" type="button" data-i="${i}"><span class="ic"></span><span class="pl">Hear what Flow cut</span></button><span class="ptime">0:00</span>
+       <div class="play"><button class="pbtn" type="button" data-i="${i}"><span class="ic"></span><span class="pl">Watch it happen · my voice</span></button><span class="ptime">0:00</span>
          <span class="pnote">${t.audio?'My real voice note, unedited':'Preview · voice note coming'}</span></div>
        <div class="stamp lbl">${t.sess}</div></div>
      <div class="pC"><div><span class="lbl">What I kept</span><h4>${t.lesson}</h4></div><div><span class="lbl">What I do now</span><p>${t.next}</p></div></div>
@@ -802,7 +829,7 @@ function stop(){
   if(P.audio){P.audio.pause();P.audio=null}
   cancelAnimationFrame(P.raf);window.__lvl=null;
   if(P.i>=0){const s=ui(P.i);s.querySelector('.rawq').classList.remove('playing');s.querySelectorAll('.rw').forEach(w=>w.classList.remove('lit'));
-    const b=s.querySelector('.pbtn');b.classList.remove('on');b.querySelector('.pl').textContent='Hear what Flow cut'}
+    const b=s.querySelector('.pbtn');b.classList.remove('on');b.querySelector('.pl').textContent='Watch it happen · my voice'}
   if(P.i>=0&&P.sPrev){B.sT=P.sPrev;B.yT=P.yPrev}P.sPrev=null;
   P.i=-1;
 }
@@ -839,7 +866,37 @@ function play(i){
     P.raf=requestAnimationFrame(loop);
   }
 }
-document.querySelectorAll('.pbtn').forEach(b=>b.addEventListener('click',()=>play(+b.dataset.i)));
+
+/* ---------- film mode: my voice plays the scene like a short film ---------- */
+const FILM={el:document.getElementById('film'),svg:document.getElementById('fsvg'),sub:document.getElementById('fsub'),bar:document.querySelector('#fprog i'),ch:document.getElementById('fch'),tm:document.getElementById('ftime'),end:document.getElementById('fend'),a:null,i:-1,up:null,ctx:null};
+function filmOpen(i){
+  stop();filmClose(true);const t=TAKES[i];FILM.i=i;
+  document.getElementById('fnum').textContent='0'+(i+1);document.getElementById('fproj').textContent=t.proj;document.getElementById('fles').textContent=t.lesson;
+  FILM.svg.innerHTML='';FILM.up=SCENES[i]?SCENES[i](FILM.svg):()=>{};FILM.up(0);gsap.set(FILM.end,{autoAlpha:0});
+  const words=t.raw.split(' ').map(w=>({w:w.replace(/[{}]/g,''),f:/^\{/.test(w)}));
+  if(lenis)lenis.stop();gsap.to(FILM.el,{autoAlpha:1,duration:.45,ease:'power2.out'});
+  const a=new Audio(t.audio);FILM.a=a;a.crossOrigin='anonymous';let an=null;
+  try{FILM.ctx=FILM.ctx||new (window.AudioContext||window.webkitAudioContext)();const sr=FILM.ctx.createMediaElementSource(a);an=FILM.ctx.createAnalyser();an.fftSize=512;sr.connect(an);an.connect(FILM.ctx.destination);FILM.ctx.resume()}catch(e){}
+  const data=new Uint8Array(256);let quiet=0,last=performance.now();
+  const lp=now=>{if(FILM.a!==a)return;const d=a.duration||1,p=Math.min(1,a.currentTime/d);
+    let l=.3;if(an){an.getByteTimeDomainData(data);let m=0;for(const v of data)m=Math.max(m,Math.abs(v-128));l=Math.min(1,m/70)}
+    if(flowOn){if(l<.06){quiet+=now-last;if(quiet>160){a.currentTime=Math.min(d,a.currentTime+.25);quiet=0}}else quiet=0}last=now;
+    FILM.up(p);FILM.bar.style.width=(p*100)+'%';FILM.ch.textContent=p<.3?'What I built':p<.68?'What went wrong':'What I kept';
+    const k=Math.min(words.length-1,Math.floor(p*words.length));const w0=Math.max(0,k-6),w1=Math.min(words.length,k+5);
+    FILM.sub.innerHTML=words.slice(w0,w1).map((x,j)=>{const jj=w0+j;if(flowOn&&x.f)return '';return `<span class="${jj>k?'o':''}${x.f?' f':''}">${x.w}</span>`}).join(' ');
+    FILM.svg.classList.toggle('glitch',!flowOn&&words[k].f);FILM.svg.style.transform=`scale(${1+l*.02})`;
+    FILM.tm.textContent=`${fmt(a.currentTime)} / ${fmt(d)}`;
+    if(a.ended){FILM.svg.classList.remove('glitch');FILM.up(1);gsap.to(FILM.end,{autoAlpha:1,duration:.6});return}
+    requestAnimationFrame(lp)};
+  a.addEventListener('loadedmetadata',()=>{a.play().then(()=>requestAnimationFrame(lp)).catch(()=>{FILM.sub.textContent='Tap Watch again to play with sound.'})},{once:true});a.load();
+}
+function filmClose(quick){if(FILM.a){FILM.a.pause();FILM.a=null}FILM.svg&&FILM.svg.classList.remove('glitch');if(quick&&FILM.i<0)return;
+  gsap.to(FILM.el,{autoAlpha:0,duration:quick?0:.35});if(lenis)lenis.start();FILM.i=-1}
+document.getElementById('fclose').addEventListener('click',()=>filmClose());
+document.getElementById('fagain').addEventListener('click',()=>{const i=FILM.i;filmOpen(i)});
+document.getElementById('fnext').addEventListener('click',()=>{const i=(FILM.i+1)%TAKES.length;filmOpen(i)});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&FILM.i>=0)filmClose()});
+document.querySelectorAll('.pbtn').forEach(b=>b.addEventListener('click',()=>filmOpen(+b.dataset.i)));
 document.querySelectorAll('.own input').forEach(inp=>inp.addEventListener('change',()=>{const f=inp.files&&inp.files[0];if(!f)return;const i=+inp.dataset.i;
   P.own[i]=URL.createObjectURL(f);const s=ui(i);s.querySelector('.pnote').textContent=f.name;stop();play(i)}));
 sw.addEventListener('click',()=>{if(P.i>=0){const i=P.i;stop();play(i)}});
