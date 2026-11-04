@@ -92,6 +92,11 @@ header .r{display:flex;gap:28px;font-variant-numeric:tabular-nums}
 #tape .tk{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:var(--mute)}
 #tape h2{font:700 clamp(30px,4.6vw,76px)/1 var(--display);letter-spacing:-.04em;margin:0;max-width:20ch;text-wrap:balance}
 #tape h2 em{color:var(--raw);font-style:italic}
+#twrap{position:relative}
+#tdoor{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:14px;pointer-events:none;opacity:0;padding:0 6%}
+#tdoor .lbl{color:var(--raw)}
+#tdoor p{margin:0;font:700 clamp(24px,3.6vw,58px)/1.04 var(--display);letter-spacing:-.035em;max-width:24ch;text-wrap:balance}
+#tdoor .sub{color:var(--mute)}
 #tcv{width:100%;height:clamp(140px,26vh,260px);display:block;cursor:pointer;touch-action:pan-y}
 #tnames{position:relative;height:18px;overflow:hidden}
 #tnames span{position:absolute;top:0;white-space:nowrap;color:var(--mute);transition:color .3s}
@@ -305,16 +310,17 @@ footer .bar{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;m
 <section id="tape" class="g" aria-label="The tape">
   <div class="stick">
     <div class="tk lbl"><span>The tape · all six voice notes, exactly as recorded</span><span id="tclock">0:00 / 0:00</span></div>
-    <h2>Every blue gap is a pause Flow deletes. <em>Something was in each one.</em></h2>
-    <canvas id="tcv" aria-label="Waveform of my six voice notes with the pauses marked"></canvas>
+    <h2>Every blue gap is a pause Flow deletes. <em>Press play and I'll tell you what was in them.</em></h2>
+    <div id="twrap"><canvas id="tcv" aria-label="Waveform of my six voice notes with the pauses marked"></canvas><div id="tdoor" aria-live="polite"><span class="lbl" id="tdl"></span><p id="tdp"></p><span class="lbl sub">What I was thinking in that pause</span></div></div>
     <div id="tnames" class="lbl"></div>
     <div id="tcap">Scroll to move along my voice, or tap anywhere on the tape to hear it from that point.</div>
     <div class="tstats">
       <div><span class="lbl">Pauses Flow would cut</span><strong id="tnp">0</strong></div>
       <div><span class="lbl">Seconds of me deleted</span><strong id="tsec">0.0</strong></div>
       <div><span class="lbl">You have restored</span><strong class="b" id="trest">0.0s</strong></div>
+      <div><span class="lbl">Pauses opened</span><strong class="b" id="tdn">0 / 6</strong></div>
     </div>
-    <div class="tact"><button class="kbd" id="tundo" type="button"><kbd>⌘Z</kbd> Undo Flow</button><button class="kbd" id="tredo" type="button">Let Flow edit it</button></div>
+    <div class="tact"><button class="kbd" id="tplay" type="button" style="background:var(--raw);color:var(--paper);border-color:var(--raw)">▶ Play the tape</button><button class="kbd" id="tundo" type="button"><kbd>⌘Z</kbd> Undo Flow</button><button class="kbd" id="tredo" type="button">Let Flow edit it</button></div>
   </div>
 </section>
 <div id="toast" role="status" aria-live="polite"></div>
@@ -811,6 +817,15 @@ sw.addEventListener('click',()=>{if(P.i>=0){const i=P.i;stop();play(i)}});
 const TD=[{"d":33.43,"p":[[3.79,4.01],[5.88,6.59],[10.43,11.08],[13.87,14.48],[15.63,16.03],[18.61,19.33],[21.66,22.19],[23.44,24.35],[25.21,25.51],[26.74,26.99],[27.8,28.31]],"w":[0.05,0.11,0.35,1,0.93,0.93,0.32,0.3,1,0.78,0.98,0.97,0.96,0.87,0.95,0.65,0.86,0.74,0.74,0.18,0.88,0.64,0.72,1,0.83,0.91,0.59,0.72,0.65,0.65,0.15,0.12,0.18,0.82,0.94,1,0.76,0.9,0.88,0.87,0.65,0.9,0.93,0.96,0.78,1,0.84,0.13,0.12,0.12,0.14,0.13,0.14,0.11,1,0.91,0.83,1,0.53,0.9,0.81,0.78,1,0.82,0.53,0.47,0.58,0.7,0.88,0.93,0.78,0.72,0.99,0.89,0.68,0.26,1,0.94,1,0.99,0.46,1,1,0.81,0.11,0.12,0.14,0.13,0.15,0.96,1,0.84,1,0.97,0.94,0.82,0.75,0.63,0.2,0.85,1,1,0.82,0.8,0.81,0.61,0.92,1,0.96,0.76,0.6,0.13,0.11,0.14,0.11,0.15,0.85,1,0.98,0.79,0.81,0.92,0.99,0.99,0.79,0.1,0.13,0.12,0.23,0.86,1,1,1,0.76,0.67,0.78,0.65,0.85,0.91,0.75,0.83,1,0.86,0.71,0.81,0.88,1,1,0.68,0.11,0.1,0.1,0.1,0.13,0.76,1,1,1,1,0.36,0.15,0.58,1,1,0.32,1,0.6,0.28,1,0.66,1,0.75,0.67,0.11,0.1,0.09,0.12,0.8,0.75,0.76,0.76,0.58,0.47,0.51,0.83,0.9,1,0.32,0.12,0.11,0.11,0.1,0.11,0.12,0.14,0.34,1,0.9,1,0.81,0.82,0.61,0.14,1,1,0.74,0.91,1,1,0.93,0.54,1,0.73,0.55,0.1,1,1,0.52,0.86,0.55,1,1,0.16,0.11,0.13,0.14,1,0.51,0.22,0.93,0.65,0.7,0.41,1,1,1,0.22,0.86,0.86,0.36,0.7,0.59,0.69,0.66,0.68,0.62,0.56,0.71,0.91,0.4,0.52,1,1,0.67,1,0.78,0.58,0.78,1,0.94,0.16,0.1,0.11,0.1,0.1,0.12,0.1]},{"d":52.24,"p":[[2.74,3.53],[6.35,6.85],[6.86,7.12],[7.13,7.43],[17.26,17.61],[18.13,18.38],[22.11,22.55],[23.04,23.44],[24.21,24.48],[24.97,25.7],[27.12,27.53],[28.45,28.92],[29.89,30.12],[34.39,34.86],[37.78,38.35],[40.79,41.48]],"w":[0.03,0.73,0.75,1,0.91,0.24,0.94,1,1,1,0.83,0.82,0.78,0.17,0.79,0.72,0.55,0.53,0.38,0.54,0.76,0.61,0.12,0.12,0.12,0.13,0.13,0.12,0.52,0.88,0.52,0.62,0.56,0.17,1,0.59,0.41,0.55,1,0.61,0.63,0.43,0.51,1,0.98,0.92,0.25,0.66,0.86,0.85,0.65,0.13,0.13,0.14,0.15,0.11,0.17,0.13,0.13,0.56,0.73,0.84,0.8,0.58,0.87,0.85,0.77,0.64,0.59,0.12,0.18,0.15,0.71,0.75,0.51,0.62,0.65,0.46,0.68,0.4,0.72,0.77,0.92,0.89,1,1,0.67,0.89,0.68,0.23,0.17,0.2,0.14,0.74,0.56,0.93,0.94,1,0.93,0.32,0.68,0.46,1,1,0.98,1,0.72,0.16,0.17,0.16,0.11,0.17,0.14,0.18,0.69,0.72,0.61,0.82,0.99,0.9,0.76,0.77,0.62,0.75,0.61,0.91,0.67,0.68,0.79,0.35,1,1,1,1,0.91,0.83,0.37,0.25,0.13,0.13,0.16,0.2,0.24,0.27,0.15,0.13,0.64,0.8,0.86,0.88,0.93,0.99,0.99,0.79,0.5,0.19,0.16,0.53,0.81,1,0.76,1,1,0.79,0.46,0.83,0.34,1,1,1,0.92,0.8,0.66,0.61,0.99,0.95,0.19,0.11,0.08,0.14,0.9,0.88,0.88,0.7,0.11,0.11,0.1,0.33,1,0.92,0.81,0.76,0.24,0.15,0.11,0.72,1,0.95,0.4,0.15,0.13,0.12,0.14,0.14,0.13,1,1,1,1,1,1,1,0.76,1,1,0.85,0.24,0.1,0.11,0.15,0.9,1,0.97,0.56,0.7,0.77,0.71,0.15,0.12,0.13,0.15,0.3,0.29,0.17,0.15,0.15,1,1,0.21,0.14,0.99,0.95,0.66,1,0.66,0.78,1,1,0.97,0.76,0.45,0.55,0.76,0.62,0.94,0.82,0.94,1,0.53,0.66,0.98,1,1,0.83,0.81,0.2,0.7,0.97,0.88,1,0.82,0.2,0.15,0.16,0.15,0.12,0.13,0.12,0.17,0.13,1,1,1,1,1,1,0.23,1,1,1,1,0.85,1,1,0.8,0.7,0.69,0.54,0.78,0.78,1,0.48,0.12,0.12,0.12,0.13,1,1,0.78,1,0.99,1,0.68,0.86,0.73,0.88,1,0.64,0.6,0.2,0.78,0.72,0.79,0.62,0.12,0.15,0.13,0.13,0.13,0.13,0.12,0.18,0.13,1,1,0.18,1,0.94,0.8,0.75,0.66,0.7,0.61,0.8,0.86,0.93,0.78,0.83,0.75,0.89,0.83,0.65,0.52,0.74,0.77,0.42,1,0.57,0.58,1,0.93,0.85,0.95,0.62,0.86,0.87,0.74,1,1,0.72,0.76,0.65,1,0.35,1,0.88,1,0.71,0.15,0.3,0.74,0.95,1,0.83,0.9,0.4,1,0.83,1,0.77,0.83,0.38,0.77,1,0.94,1,0.94,0.4,0.84,1,0.9,0.76,1,1,0.96,0.93,0.96,0.74,1,1,1,1,1,0.76,0.56,0.21,0.24]},{"d":34.83,"p":[[6.16,6.6],[9.45,10.02],[11.38,11.73],[14.38,15.25],[17.43,17.84],[19.18,19.49],[21.26,21.99],[26.4,26.72],[28.33,28.85],[32.11,32.68],[34.26,34.52]],"w":[0.07,0.88,0.94,1,1,1,0.86,0.85,0.35,0.17,0.88,0.98,1,1,0.21,0.18,0.14,0.16,0.17,0.14,0.19,0.17,0.18,0.13,1,0.84,0.78,1,1,0.68,0.96,0.75,0.77,0.81,0.79,0.21,0.76,0.62,0.97,0.87,0.54,0.68,0.87,1,0.83,0.88,0.8,0.79,0.55,0.15,0.14,0.13,0.17,0.88,0.89,0.89,0.82,0.72,0.88,0.7,0.88,0.66,0.84,0.79,0.79,0.76,1,1,0.96,0.76,0.76,0.79,0.33,0.58,0.57,0.17,0.12,0.13,0.12,0.13,1,1,0.92,0.82,0.92,1,1,1,1,0.77,0.6,0.13,0.13,0.21,0.59,0.59,1,1,1,0.23,0.39,1,0.68,0.6,0.53,0.73,0.91,0.82,0.73,0.79,0.72,0.81,0.79,0.77,0.64,0.11,0.11,0.11,0.12,0.11,0.12,0.5,0.88,0.62,1,1,1,0.54,0.82,0.78,0.72,0.36,0.86,0.62,0.86,1,0.79,0.44,0.17,0.15,0.13,0.12,0.73,1,0.53,0.86,0.76,0.79,0.73,0.83,0.54,0.66,0.55,0.23,0.11,0.14,0.14,0.91,1,0.9,0.86,0.72,1,0.98,1,1,1,0.93,0.66,0.6,0.13,0.11,0.12,0.11,0.13,0.38,1,0.78,0.43,0.82,0.98,1,0.87,0.19,1,1,0.49,0.91,0.19,0.36,0.91,0.87,0.18,0.14,0.88,0.62,0.92,0.82,0.77,0.81,0.83,1,0.6,0.1,0.93,1,0.88,0.91,0.73,1,0.94,0.14,0.13,0.76,0.87,0.54,0.88,0.83,0.97,0.93,0.85,0.89,0.65,0.74,0.65,0.11,0.15,0.14,0.12,0.12,1,1,1,1,0.89,0.74,0.88,0.92,1,0.84,0.96,0.31,0.75,0.82,0.76,0.87,0.27,1,1,1,0.92,0.92,0.76,0.6,0.7,0.82,0.15,0.12,0.14,0.12,0.38,1,1,1,0.84,0.75,0.94,0.74,1,1,1,0.96,0.67,0.22,0.14,0.14,0.14,0.13]},{"d":37.15,"p":[[3.66,3.94],[5.24,5.97],[7.39,7.83],[10.13,10.49],[10.84,11.11],[15.59,17.07],[18.38,18.64],[19.98,20.31],[21.71,22.09],[23.5,23.8],[26.65,27.5],[32.74,33.59],[35.14,35.43]],"w":[0.02,1,1,0.79,0.4,0.61,0.7,0.35,1,1,0.82,0.85,0.7,0.47,1,0.79,0.53,0.98,1,0.93,0.74,0.67,0.78,0.61,0.49,0.64,0.91,0.83,0.76,0.34,0.12,0.36,0.94,0.79,0.86,0.95,1,1,0.74,0.57,0.75,0.4,0.11,0.12,0.11,0.12,0.1,0.24,1,0.96,0.81,0.91,0.99,0.7,0.92,0.61,0.37,0.74,0.73,0.14,0.11,0.13,0.56,0.74,0.19,0.97,0.78,0.47,1,0.82,0.74,0.91,0.94,0.9,0.83,0.57,1,1,0.73,0.8,0.49,0.14,0.12,0.15,0.13,0.14,0.16,0.12,0.18,1,1,1,1,1,0.38,0.87,1,0.88,1,0.96,0.93,0.79,0.99,1,0.84,0.56,0.69,0.35,0.24,1,1,1,1,1,0.32,0.18,1,1,1,1,1,0.61,1,1,0.14,0.12,0.14,0.13,0.14,0.14,0.12,0.14,0.13,0.11,0.14,0.12,1,1,0.58,0.57,0.8,0.8,0.14,0.16,0.64,1,0.73,0.14,0.13,1,0.96,0.99,0.24,0.69,0.79,0.54,0.64,0.46,0.38,0.37,0.12,0.12,0.86,0.95,0.88,1,1,0.93,0.65,0.72,0.73,0.9,0.18,0.15,0.12,0.11,0.49,0.92,0.81,0.36,0.76,0.74,0.87,0.99,0.76,1,0.75,0.85,0.12,0.14,0.87,0.89,0.64,0.85,0.85,0.86,0.46,0.61,0.17,0.8,0.57,0.68,0.61,0.16,0.74,0.82,0.82,1,0.44,0.78,0.77,0.5,0.67,0.28,0.11,0.13,0.11,0.11,0.11,0.14,0.99,1,1,1,0.54,0.27,0.82,0.21,1,1,0.84,0.65,0.73,0.78,0.62,0.95,0.96,0.75,1,0.72,0.14,0.68,0.84,0.97,0.88,0.76,0.93,0.29,0.67,0.63,0.14,0.75,0.67,0.74,0.74,0.79,1,0.73,1,0.97,0.75,0.67,0.12,0.13,0.12,0.13,0.14,0.11,0.51,0.81,0.8,0.75,0.69,0.58,0.63,0.66,0.99,0.9,0.68,0.84,0.83,0.11,0.09,1,1,0.83,0.63,0.89,0.3,0.8,0.99,1,0.78,0.39,0.12,0.12,0.14]},{"d":23.12,"p":[[3.05,3.48],[5.64,6.52],[8.57,9.09],[9.44,9.82],[10.91,11.25],[12.91,13.53],[18.33,18.74]],"w":[0.05,0.1,0.13,0.75,0.99,0.98,0.27,0.79,0.64,0.42,0.19,0.35,0.72,1,0.87,1,0.95,0.88,0.19,1,1,0.72,0.2,0.83,0.48,0.17,0.18,0.61,1,1,1,0.93,1,0.57,0.15,0.77,0.95,0.88,1,1,0.83,0.78,0.83,0.99,0.96,0.15,0.17,0.13,0.18,0.16,0.14,0.47,0.96,1,0.83,0.93,0.62,0.67,0.57,0.68,0.58,0.84,1,0.69,0.73,0.87,1,1,0.23,0.19,0.14,0.15,1,1,1,0.24,0.16,0.16,0.91,0.9,0.53,0.63,0.55,1,0.7,0.79,0.57,0.16,0.16,1,1,1,0.18,0.58,0.96,1,1,0.95,0.94,0.82,0.38,0.72,0.56,0.15,0.14,0.14,0.19,0.31,0.99,0.74,0.72,0.71,0.82,0.69,0.57,0.8,0.52,0.48,0.95,0.79,0.4,1,1,0.39,0.46,0.53,1,0.99,0.72,0.95,0.97,0.88,0.24,0.69,0.63,0.76,0.66,0.25,1,0.27,0.75,0.68,0.6,1,0.34,0.42,0.18,0.2,0.2,0.3,0.28,0.5,0.96,1,0.97,0.53,0.97,0.63,0.86,0.83,0.22,0.72,0.26,0.65,0.93,0.99,0.2,0.69,0.68,0.63,0.97,1,0.87,0.76,1,1,0.75,1,0.93,0.58,0.3,0.18,0.17,0.16]},{"d":23.49,"p":[[1.03,1.52],[3.15,3.4],[4.41,4.7],[6.32,7.13],[7.58,7.84],[8.33,8.71],[10.2,11.27],[13.68,13.93],[16.46,17.35],[20.83,21.7],[22.13,22.43]],"w":[0.06,0.32,0.62,0.81,0.64,1,1,0.94,0.24,0.16,0.17,0.2,1,0.95,0.58,0.68,0.79,0.75,0.8,0.87,0.83,0.87,0.83,0.54,0.21,0.22,0.19,0.92,1,0.88,0.89,0.62,0.71,0.72,0.86,0.28,0.17,0.96,1,1,0.89,0.17,1,1,0.42,0.85,0.81,1,1,0.76,0.56,0.14,0.14,0.14,0.14,0.19,0.6,1,1,0.91,0.41,0.15,0.77,1,1,0.76,0.73,0.14,0.14,0.91,0.95,0.86,0.85,1,1,0.71,0.4,0.74,0.76,0.91,1,0.35,0.2,0.15,0.17,0.15,0.15,0.15,0.19,0.81,1,1,1,0.82,0.53,0.52,0.58,0.54,0.44,0.86,0.8,0.74,0.72,0.55,0.41,0.89,1,0.62,0.67,0.19,0.63,1,0.67,0.63,0.47,0.55,0.64,0.66,0.37,0.63,0.58,0.64,0.87,0.72,0.99,0.86,0.56,0.52,0.67,0.51,0.83,0.32,0.17,0.19,0.15,0.13,0.19,0.16,0.95,0.76,0.27,0.83,0.79,0.17,0.77,0.2,0.69,0.9,0.78,0.5,0.52,0.39,0.89,0.91,0.92,0.81,0.93,0.94,0.94,0.8,0.95,1,0.6,0.85,1,1,0.18,0.16,0.16,0.18,0.15,0.15,1,1,0.82,0.59,0.41,0.17,0.93,1,0.77,0.89,0.55,0.2,0.17,0.18,0.18]}];
 const cv=document.getElementById('tcv'),cx=cv.getContext('2d'),names=document.getElementById('tnames'),cap=document.getElementById('tcap');
 const tnp=document.getElementById('tnp'),tsec=document.getElementById('tsec'),trest=document.getElementById('trest'),tclock=document.getElementById('tclock'),toast=document.getElementById('toast');
+const DOORS=[
+ {ni:0,a:23.44,b:24.35,t:"That one hurt. I nearly left this part out."},
+ {ni:1,a:24.97,b:25.7,t:"Saliba and Gabriel. I knew it was wrong before I knew why."},
+ {ni:2,a:14.38,b:15.25,t:"Three function names. Three errors. One deadline."},
+ {ni:3,a:15.59,b:17.07,t:"It worked perfectly. On my laptop."},
+ {ni:4,a:5.64,b:6.52,t:"I could have published it. Nobody would have checked."},
+ {ni:5,a:10.2,b:11.27,t:"Five drafts of a two-line email. That was me before Flow."}];
+const tdoor=document.getElementById('tdoor'),tdl=document.getElementById('tdl'),tdp=document.getElementById('tdp'),tdn=document.getElementById('tdn');
+const opened=new Set();let op=0,opT=0,doorG=-1,curDoor=-1;
 const BPS=8;const bins=[];let T=0,P=0,PS=0;
 TD.forEach((n,ni)=>{n.w.forEach((v,k)=>{const t=k/BPS;const inP=n.p.some(([a,b])=>t>=a&&t<b);bins.push({ni,t,g:T+t,v,inP})});T+=n.d;P+=n.p.length;PS+=n.p.reduce((a,[x,y])=>a+y-x,0)});
 const starts=[];{let acc=0;TD.forEach(n=>{starts.push(acc);acc+=n.d})}
@@ -823,14 +838,18 @@ const bw=()=>W/bins.length;
 function xs(){const w=bw();let x=0;const out=new Float32Array(bins.length+1);for(let k=0;k<bins.length;k++){out[k]=x;x+=bins[k].inP?w*(1-c):w}out[bins.length]=x;return out}
 const fmt=x=>`${Math.floor(x/60)}:${String(Math.floor(x%60)).padStart(2,'0')}`;
 function draw(){
-  c+=(cT-c)*.08;const X=xs();cx.clearRect(0,0,W,H);const w=bw(),mid=H/2;
+  c+=(cT-c)*.08;op+=(opT-op)*.12;const X=xs();cx.save();cx.globalAlpha=1;const FADE=1-op*.93;cx.clearRect(0,0,W,H);const w=bw(),mid=H/2;
   const hk=Math.floor(head*BPS);
   for(let k=0;k<bins.length;k++){const b=bins[k],x=X[k],ww=X[k+1]-x;if(ww<.2)continue;
-    if(b.inP){const a=(.32+.12*Math.sin(performance.now()/300+k))*(1-c);cx.fillStyle=`rgba(36,51,255,${a})`;cx.fillRect(x,8,ww,H-16);cx.fillStyle=`rgba(36,51,255,${(1-c)})`;cx.fillRect(x,0,ww,4);cx.fillRect(x,H-4,ww,4);continue}
+    const isDoor=DOORS.some(d=>b.ni===d.ni&&b.t>=d.a&&b.t<d.b);if(isDoor&&c<.5){cx.fillStyle=`rgba(36,51,255,${.9*FADE})`;cx.fillRect(x,0,ww,H);continue}
+    if(b.inP){const a=(.32+.12*Math.sin(performance.now()/300+k))*(1-c)*FADE;cx.fillStyle=`rgba(36,51,255,${a})`;cx.fillRect(x,8,ww,H-16);cx.fillStyle=`rgba(36,51,255,${(1-c)})`;cx.fillRect(x,0,ww,4);cx.fillRect(x,H-4,ww,4);continue}
     const h=Math.max(1.5,Math.pow(b.v,1.8)*H*.44);const past=bins[k].g<=head+.001;
-    cx.fillStyle=past?'#2433ff':'#0c0c0d';cx.globalAlpha=past?1:.82;cx.fillRect(x+ww*.18,mid-h,Math.max(1,ww*.64),h*2);cx.globalAlpha=1}
+    cx.fillStyle=past?'#2433ff':'#0c0c0d';cx.globalAlpha=(past?1:.82)*FADE;cx.fillRect(x+ww*.18,mid-h,Math.max(1,ww*.64),h*2);cx.globalAlpha=1}
   /* note dividers */
   cx.fillStyle='#7b7b7e';starts.forEach((s0,ni)=>{if(!ni)return;const k=Math.round(s0*BPS);let kk=bins.findIndex(b=>b.ni===ni);cx.fillRect(X[kk]-1,6,1,H-12)});
+  cx.restore();
+  /* door numbers */
+  cx.fillStyle='#2433ff';cx.font='500 10px ui-monospace,monospace';DOORS.forEach((d,k)=>{if(c>.5)return;const kk=bins.findIndex(b=>b.ni===d.ni&&b.t>=d.a);cx.fillText(String(k+1),X[kk]+3,H-6)});
   /* playhead */
   let hx=0;{let kk=bins.findIndex(b=>b.g>=head);if(kk<0)kk=bins.length;hx=X[kk]}
   cx.fillStyle='#0c0c0d';cx.fillRect(hx-1,0,2,H);cx.beginPath();cx.arc(hx,6,5,0,7);cx.fill();
@@ -843,20 +862,31 @@ function draw(){
   let np=0,sec=0;TD.forEach((n,k)=>n.p.forEach(([a,b])=>{if(starts[k]+a<=head){np++;sec+=b-a}}));
   tnp.textContent=np;tsec.textContent=sec.toFixed(1);
   if(ni!==lit){lit=ni;cap.innerHTML=`<b>${TAKES[ni].proj}.</b> ${TAKES[ni].pol.replace('|','')} <span style="color:var(--mute)">That's the version Flow writes. The gaps on the tape are where the real story is. Tap to listen.</span>`}
+  /* scroll scrub opens doors silently */
+  if(!play){let hit=-1;DOORS.forEach((d,k)=>{const A=starts[d.ni]+d.a,Bb=starts[d.ni]+d.b;if(head>=A-.8&&head<=Bb+.8)hit=k});if(hit!==curDoor){hit>=0?openDoor(hit):closeDoor()}}
   requestAnimationFrame(draw)}
+function openDoor(k){const d=DOORS[k];curDoor=k;doorG=starts[d.ni]+(d.a+d.b)/2;opT=c>.5?0:1;if(c>.5)return;
+  tdl.textContent=`${TAKES[d.ni].proj} · ${fmt(d.a)} · ${(d.b-d.a).toFixed(1)} seconds of silence`;tdp.textContent=d.t;
+  gsap.to(tdoor,{opacity:1,duration:.5,ease:'power2.out'});gsap.fromTo(tdp,{yPercent:30,opacity:0},{yPercent:0,opacity:1,duration:.9,ease:'expo.out',delay:.15});
+  opened.add(k);tdn.textContent=opened.size+' / 6'}
+function closeDoor(){curDoor=-1;opT=0;gsap.to(tdoor,{opacity:0,duration:.35})}
 function pausedBefore(g){let s=0;TD.forEach((n,k)=>n.p.forEach(([a,b])=>{const A=starts[k]+a,Bb=starts[k]+b;if(Bb<=g)s+=b-a;else if(A<g)s+=g-A}));return s}
 requestAnimationFrame(draw);
 /* scroll scrubs the playhead */
 ScrollTrigger.create({trigger:'#tape',start:'top top',end:'bottom bottom',onUpdate:st=>{if(!play)head=st.progress*T}});
 /* tap to hear from that point */
 function gAt(px){const X=xs();let k=0;while(k<bins.length&&X[k+1]<px)k++;return bins[Math.min(k,bins.length-1)].g}
-function stopT(){if(play){play.a.pause();play=null;window.__lvl=null}}
-cv.addEventListener('click',e=>{const r=cv.getBoundingClientRect();const g=gAt(e.clientX-r.left);let ni=starts.filter(s0=>s0<=g).length-1;stopT();
-  const a=new Audio(TAKES[ni].audio);a.currentTime=g-starts[ni];play={a,ni};a.play().catch(()=>{});
+function stopT(){if(play){play.a.pause();play=null;window.__lvl=null}const b=document.getElementById('tplay');if(b)b.textContent='▶ Play the tape'}
+let chain=false;
+cv.addEventListener('click',e=>{const r=cv.getBoundingClientRect();chain=false;startAt(gAt(e.clientX-r.left))});
+document.getElementById('tplay').addEventListener('click',()=>{if(play){stopT();closeDoor();return}chain=true;startAt(head>=T-.5?0:head)});
+function startAt(g){let ni=starts.filter(s0=>s0<=g).length-1;stopT();closeDoor();
+  const a=new Audio(TAKES[ni].audio);const off=Math.max(0,g-starts[ni]);play={a,ni};const go=()=>{a.currentTime=off;a.play().catch(()=>{})};a.readyState>=1?go():a.addEventListener('loadedmetadata',go,{once:true});document.getElementById('tplay').textContent='❚❚ Pause';
   const lp=()=>{if(!play||play.a!==a)return;head=starts[ni]+a.currentTime;
     if(c>.5){const n=TD[ni];const hit=n.p.find(([x,y])=>a.currentTime>=x&&a.currentTime<y-.05);if(hit)a.currentTime=hit[1]}
-    else{TD[ni].p.forEach(([x,y],k)=>{if(a.currentTime>=y&&!restored.has(ni+'-'+k)){restored.add(ni+'-'+k);rest+=y-x;trest.textContent=rest.toFixed(1)+'s'}})}
-    if(a.ended){play=null;return}requestAnimationFrame(lp)};requestAnimationFrame(lp)});
+    else{const k=DOORS.findIndex(d=>d.ni===ni&&a.currentTime>=d.a&&a.currentTime<d.a+.3);if(k>=0&&!play.held&&play.done!==k){play.held=true;play.done=k;a.pause();openDoor(k);setTimeout(()=>{if(!play||play.a!==a)return;closeDoor();a.currentTime=DOORS[k].b;a.play();play.held=false;requestAnimationFrame(lp)},4200);return}
+    TD[ni].p.forEach(([x,y],k)=>{if(a.currentTime>=y&&!restored.has(ni+'-'+k)){restored.add(ni+'-'+k);rest+=y-x;trest.textContent=rest.toFixed(1)+'s'}})}
+    if(a.ended){stopT();if(chain&&ni<5)startAt(starts[ni+1]+.01);return}requestAnimationFrame(lp)};requestAnimationFrame(lp)}
 let rest=0;
 ScrollTrigger.create({trigger:'#tape',start:'top bottom',end:'bottom top',onLeave:stopT,onLeaveBack:stopT});
 /* undo / redo Flow */
