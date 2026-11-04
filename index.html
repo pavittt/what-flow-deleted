@@ -1,3 +1,8 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>What Flow Deleted</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -82,6 +87,30 @@ header .r{display:flex;gap:28px;font-variant-numeric:tabular-nums}
 .marq .tr span:nth-child(3n){color:#8b93ff;font-style:italic}
 
 /* manifesto */
+#tape{height:260vh;position:relative}
+#tape .stick{position:sticky;top:0;height:100svh;display:flex;flex-direction:column;justify-content:center;gap:3.2vh;padding-block:12vh 10vh}
+#tape .tk{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:var(--mute)}
+#tape h2{font:700 clamp(30px,4.6vw,76px)/1 var(--display);letter-spacing:-.04em;margin:0;max-width:20ch;text-wrap:balance}
+#tape h2 em{color:var(--raw);font-style:italic}
+#tcv{width:100%;height:clamp(140px,26vh,260px);display:block;cursor:pointer;touch-action:pan-y}
+#tnames{position:relative;height:18px;overflow:hidden}
+#tnames span{position:absolute;top:0;white-space:nowrap;color:var(--mute);transition:color .3s}
+#tnames span.on{color:var(--ink)}
+#tcap{min-height:3.2em;font:500 clamp(16px,1.5vw,21px)/1.45 var(--body);max-width:60ch}
+#tcap b{color:var(--raw);font-weight:600}
+.tstats{display:flex;gap:clamp(18px,4vw,64px);flex-wrap:wrap}
+.tstats div{display:flex;flex-direction:column;gap:6px}
+.tstats strong{font:700 clamp(28px,3.4vw,52px)/1 var(--display);letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.tstats strong.b{color:var(--raw)}
+.tact{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.kbd{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--ink);border-radius:999px;padding:9px 16px;background:none;font:500 14px var(--body);color:var(--ink);cursor:pointer}
+.kbd kbd{font:500 12px var(--mono);border:1px solid currentColor;border-radius:5px;padding:1px 6px}
+.kbd:focus-visible{outline:2px solid var(--raw);outline-offset:3px}
+#toast{position:fixed;left:50%;top:84px;transform:translate(-50%,-20px);opacity:0;z-index:30;background:var(--ink);color:var(--paper);padding:12px 20px;border-radius:999px;font:500 14px var(--body);pointer-events:none;transition:.35s}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+.undo-end{font:700 clamp(22px,2.6vw,40px)/1.1 var(--display);letter-spacing:-.03em;margin:0 0 5vh;max-width:24ch}
+.undo-end em{color:var(--raw)}
+@media (max-width:760px){#tape{height:220vh}#tape .stick{padding-block:9vh 13vh;gap:2vh}#tnames span{font-size:9px}#tape h2{font-size:26px}#tcv{height:18vh}#tcap{min-height:0;font-size:15px}#tcap span{display:none}.tstats strong{font-size:26px}.tstats .lbl{font-size:9px}}
 #mani{padding-block:22vh}
 #mani .lbl{color:var(--mute);margin-bottom:28px;display:block}
 #mani p{font:600 clamp(30px,4.4vw,72px)/1.04 var(--display);letter-spacing:-.035em;margin:0;max-width:22ch;text-wrap:balance}
@@ -260,7 +289,7 @@ footer .bar{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;m
     <span class="l2"><span class="mask"><span><span data-on="">the</span> <em class="um" style="font-style:italic" data-on="hesitate">ums</em>.</span></span></span>
   </h1>
   <div class="foot">
-    <div><div class="lbl">How it works</div><p>Each take starts with the polished line Flow would write. Keep scrolling and the line gets struck out, and the real story it cut comes back in blue.</p></div>
+    <div><div class="lbl">How it works</div><p>Scroll along the tape of my real voice notes. Every blue gap is a pause Wispr Flow would delete. Then each take opens one up: what I built, what broke, and what I kept.</p></div>
     <div><div class="lbl">Why</div><p>People hesitate right before the true part. My failures live in those pauses, and so do my best lessons. Every take has my real voice note, unedited. Press play and listen to the ums.</p></div>
     <div class="end"><div class="lbl">Try the switch below</div><p>Turn Flow on to see what Wispr Flow actually wrote when I told these stories.</p></div>
   </div>
@@ -273,10 +302,27 @@ footer .bar{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;m
   <p id="manip">A polished story tells you what I did. The hesitations tell you what I learned, and those are the parts any good tool would delete.</p>
 </section>
 
+<section id="tape" class="g" aria-label="The tape">
+  <div class="stick">
+    <div class="tk lbl"><span>The tape · all six voice notes, exactly as recorded</span><span id="tclock">0:00 / 0:00</span></div>
+    <h2>Every blue gap is a pause Flow deletes. <em>Something was in each one.</em></h2>
+    <canvas id="tcv" aria-label="Waveform of my six voice notes with the pauses marked"></canvas>
+    <div id="tnames" class="lbl"></div>
+    <div id="tcap">Scroll to move along my voice, or tap anywhere on the tape to hear it from that point.</div>
+    <div class="tstats">
+      <div><span class="lbl">Pauses Flow would cut</span><strong id="tnp">0</strong></div>
+      <div><span class="lbl">Seconds of me deleted</span><strong id="tsec">0.0</strong></div>
+      <div><span class="lbl">You have restored</span><strong class="b" id="trest">0.0s</strong></div>
+    </div>
+    <div class="tact"><button class="kbd" id="tundo" type="button"><kbd>⌘Z</kbd> Undo Flow</button><button class="kbd" id="tredo" type="button">Let Flow edit it</button></div>
+  </div>
+</section>
+<div id="toast" role="status" aria-live="polite"></div>
 <div id="takes"></div>
 
 <section id="index" class="g">
   <h2>What I kept</h2>
+  <p class="undo-end">Every app lets you undo. <em>I can't undo these,</em> so I kept them.</p>
   <div id="rows"></div>
 </section>
 
@@ -311,7 +357,7 @@ footer .bar{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;m
 (()=>{
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const TAKES=[
- {proj:"Root Cause",ctx:"Microsoft × Premier League hackathon",yr:"Oct 2026",cut:"3.4s",sess:"Voice note · 0:33 · 74 words",audio:"audio/1.mp3",
+ {proj:"Root Cause",ctx:"Microsoft × Premier League hackathon",yr:"Oct 2026",cut:"5.8s",sess:"Voice note · 0:33 · 74 words",audio:"audio/1.mp3",
   pol:"I designed a 3D Timestack | everyone remembers.",
   what:"A debugger for football. It rewinds every goal, replays the move 200 times with each defensive mistake fixed, and proves which one mattered most. I led UI/UX and built the Timestack: the seconds before a goal stacked as 3D layers.",
   facts:["UI/UX lead · team of 3","React Three Fiber + GSAP","Benchmarked on 99 goals"],
@@ -319,7 +365,7 @@ const TAKES=[
   flowed:"At the Microsoft Premier League Hackathon, my first idea was a courtroom: players as AI agents arguing about who caused the goal. It looked clever, but it buried the actual idea. Then a redesign went live without my review and wiped out the hero animation I loved. That one hurt, so I cut the courtroom, kept one job: find the root cause, and now nothing goes live without a preview.",
   lesson:"Cut the clever idea that buries the real one.",
   next:"I cut the courtroom, rebuilt everything around one job, and set up preview builds that need approval before anything goes live."},
- {proj:"ProximaScout",ctx:"Football scouting platform",yr:"2026",cut:"2.9s",sess:"Voice note · 0:52 · 104 words",audio:"audio/2.mp3",
+ {proj:"ProximaScout",ctx:"Football scouting platform",yr:"2026",cut:"7.1s",sess:"Voice note · 0:52 · 104 words",audio:"audio/2.mp3",
   pol:"My algorithm scouts 4,521 players | perfectly.",
   what:"A scouting platform I built solo, covering 4,521 players across 9 leagues and 3 seasons. It finds a player's statistical twins, tracks how his style drifts, and shows where a squad is weakest.",
   facts:["Solo build","9 leagues · 3 seasons","187 real transfers"],
@@ -327,7 +373,7 @@ const TAKES=[
   flowed:"I was really proud of Proxima Scout, which was a scouting tool made to understand what the club really wants in the players they recruit. There were many features, such as DNA match and what the weakest position is in the team. It told me during a test that Arsenal's weakest position was center-back: Saliba and Gabriel. The code was running fine, but it still showed no errors. That's what scared me. I had scored defenders on tackles and clearances, so it was basically rewarding players for being on a weak team. Now I test every answer against actual football, not just whether the code runs.",
   lesson:"Code that runs isn't code that's right.",
   next:"I rebuilt the score as 70% match rating and 30% stats. Now I test every output against football knowledge, not just whether it runs."},
- {proj:"Euronet",ctx:"Transaction monitoring internship",yr:"Jun 2026",cut:"2.6s",sess:"Voice note · 0:34 · 67 words",audio:"audio/3.mp3",
+ {proj:"Euronet",ctx:"Transaction monitoring internship",yr:"Jun 2026",cut:"5.4s",sess:"Voice note · 0:34 · 67 words",audio:"audio/3.mp3",
   pol:"I shipped Z-score alerting | without a hitch.",
   what:"Fixed alert thresholds kept failing because traffic changes so much between day and night. I replaced them with a Z-score alert on Graphite and Grafana, plus a simulator that runs a full day of traffic in about a minute.",
   facts:["12-day project","Graphite + Grafana","1440× simulator"],
@@ -335,7 +381,7 @@ const TAKES=[
   flowed:"I was at Euronet. I had built a Z-score alert in Graphite, and Graphite has no standard deviation function, std dev, a moving standard dev, and all of them failed. I built the spread myself from mean absolute deviation. Then my backfill script just didn't work at all because Prometheus won't take old timestamps. I wrote down exactly why it failed, and honestly, that write-up was half of what I had handed over.",
   lesson:"Document the failure. It's half the deliverable.",
   next:"I built the spread from mean absolute deviation, wrote up exactly why the backfill failed, and handed over a production approach instead."},
- {proj:"MealBridge",ctx:"Food-surplus matching app",yr:"2026",cut:"3.1s",sess:"Voice note · 0:37 · 87 words",audio:"audio/4.mp3",
+ {proj:"MealBridge",ctx:"Food-surplus matching app",yr:"2026",cut:"6.8s",sess:"Voice note · 0:37 · 87 words",audio:"audio/4.mp3",
   pol:"MealBridge matched surplus food | without a glitch.",
   what:"Mess staff post leftover food, the database ranks nearby shelters with a match score (distance, need and fit), a shelter claims it, and a volunteer delivers it, with every step logged in a chain-of-custody trail. Built database-first with two teammates at VIT.",
   facts:["MySQL · 6 schema modules","FastAPI · 81 tests","Next.js · DB Lab pages"],
@@ -343,7 +389,7 @@ const TAKES=[
   flowed:"MealBridge matches leftover hostel food with shelters in real time. If two shelters could tap-claim on the same food at the same moment, then our SQL only ran on one machine. A Windows encoding thing broke every stored function, and the demo data went stale every time we rolled it. Now every SQL file forces UTF-8. The demo picks real shelters when it runs, and a live race page proves only one claim wins. If it only works on my machine, it doesn't work.",
   lesson:"If it only works on my machine, it doesn't work.",
   next:"Every SQL file now forces UTF-8, the race demo picks real shelters by match score when it runs, and a live race page shows only one claim can win."},
- {proj:"Football Analytics",ctx:"Data stories on Substack",yr:"2026",cut:"2.2s",sess:"Voice note · 0:23 · 65 words",audio:"audio/5.mp3",
+ {proj:"Football Analytics",ctx:"Data stories on Substack",yr:"2026",cut:"3.6s",sess:"Voice note · 0:23 · 65 words",audio:"audio/5.mp3",
   pol:"Every chart I published | told the story.",
   what:"I write football analytics on Substack: match breakdowns told through data, with shot maps, xG timelines, pass networks and heatmaps I build in Python with mplsoccer.",
   facts:["Python + mplsoccer","Published on Substack","Data storytelling"],
@@ -351,7 +397,7 @@ const TAKES=[
   flowed:"I also wrote for analytics on Substack. On one piece, the team IDs were swapped, so the home team was the away team, and one chart had the exact same numbers in both halves. It kind of contradicted my whole story. I could have just published it. I got two charts instead. Now every piece gets checked against the actual match before it goes out.",
   lesson:"Cut what the data doesn't support.",
   next:"I dropped two charts rather than publish something misleading. Now every piece gets a sanity check against the match before it goes out."},
- {proj:"Me",ctx:"The one Flow fixed",yr:"Now",cut:"4.6s",sess:"Voice note · 0:23 · 51 words",audio:"audio/6.mp3",
+ {proj:"Me",ctx:"The one Flow fixed",yr:"Now",cut:"5.9s",sess:"Voice note · 0:23 · 51 words",audio:"audio/6.mp3",
   pol:"I'm confident explaining | my work.",
   what:"I've built a lot. Explaining it was always the hard part. Cover letters, emails, even texts: I rewrite everything five times before anyone sees it.",
   facts:["5 drafts per message","Wispr Flow user","This site: spoken"],
@@ -463,7 +509,7 @@ gsap.ticker.add(t=>{
    if(mb){const v=new THREE.Vector3(0,.55,0);mesh.localToWorld(v);const e=new THREE.Vector3(1,.55,0);mesh.localToWorld(e);v.project(cam);e.project(cam);
     const x=(v.x+1)/2*innerWidth,y=(1-v.y)/2*innerHeight,r=Math.abs((e.x-v.x)/2*innerWidth);const show=B.s>.3&&scrollY<innerHeight*.7&&!document.getElementById('pre');
     mb.style.display=ml.style.display=show?'block':'none';
-    if(show){mb.style.left=x+'px';mb.style.top=y+'px';mb.style.width=mb.style.height=(r*2.2)+'px';ml.style.left=x+'px';ml.style.top=(y+r*1.15)+'px'}}}
+    if(show){mb.style.left=x+'px';mb.style.top=y+'px';mb.style.width=mb.style.height=(r*2.2)+'px';ml.style.left=Math.max(ml.offsetWidth/2+12,Math.min(innerWidth-ml.offsetWidth/2-12,x))+'px';ml.style.top=(y+r*1.15)+'px'}}}
 });
 
 /* cursor */
@@ -528,7 +574,7 @@ gsap.utils.toArray('#mani .w.raw').forEach(w=>gsap.to(w,{color:'#2433ff',scrollT
 
 /* blob choreography: hero right, mani left, takes right, index small, plan centre */
 const pos=(trig,x,y,s,raw)=>ScrollTrigger.create({trigger:trig,start:'top 60%',end:'bottom 40%',onToggle:self=>{if(self.isActive){B.xT=x;B.yT=y;B.sT=s;if(raw!==undefined)B.rawT=raw}}});
-pos('#hero',.33,.55,.68,.05);pos('#mani',-.3,0,.8,.12);pos('#index',.4,-.9,.38,.35);pos('#misheard',.45,1.6,.001,.1);pos('#plan',.0,0,.65,.2);
+pos('#hero',.33,.55,.68,.05);pos('#mani',-.3,0,.8,.12);pos('#index',.4,-.9,.38,.35);pos('#tape',.45,1.6,.001,.1);pos('#misheard',.45,1.6,.001,.1);pos('#plan',.0,0,.65,.2);
 
 /* ---------- scenes: each take's project and mistake, drawn and driven by scroll ---------- */
 const NS='http://www.w3.org/2000/svg',INK='#0c0c0d',RAWC='#2433ff',MUTE='#b9b9bd',ERR='#ff3b2f',PAPER='#eeeeec';
@@ -690,7 +736,7 @@ document.querySelectorAll('[data-on]').forEach(el=>el.dataset.off=el.textContent
 const polWords=["seamless","confident","polished","flawless","effortless","clear","perfect","smooth","on-brand","fluent","crisp","certain"];
 const mtrEl=document.getElementById('mtr'),mOff=mtrEl.innerHTML,mOn=[...polWords,...polWords,...polWords,...polWords].map(w=>`<span>${w}</span>`).join('');
 function setFlow(on){
-  flowOn=on;window.__flowOn=on;sw.setAttribute('aria-checked',on);document.documentElement.classList.toggle('flow-on',on);
+  flowOn=on;window.__flowOn=on;window.__tapeFlow&&window.__tapeFlow(on);sw.setAttribute('aria-checked',on);document.documentElement.classList.toggle('flow-on',on);
   fstate.textContent=on?'On · showing what Flow wrote':'Off · showing what it cut';
   document.querySelectorAll('[data-on]').forEach(el=>scramble(el,on?el.dataset.on:el.dataset.off));
   mtrEl.innerHTML=on?mOn:mOff;
@@ -759,6 +805,69 @@ document.querySelectorAll('.pbtn').forEach(b=>b.addEventListener('click',()=>pla
 document.querySelectorAll('.own input').forEach(inp=>inp.addEventListener('change',()=>{const f=inp.files&&inp.files[0];if(!f)return;const i=+inp.dataset.i;
   P.own[i]=URL.createObjectURL(f);const s=ui(i);s.querySelector('.pnote').textContent=f.name;stop();play(i)}));
 sw.addEventListener('click',()=>{if(P.i>=0){const i=P.i;stop();play(i)}});
+
+/* ---------- the tape: real waveform of all six notes, pauses marked ---------- */
+(()=>{
+const TD=[{"d":33.43,"p":[[3.79,4.01],[5.88,6.59],[10.43,11.08],[13.87,14.48],[15.63,16.03],[18.61,19.33],[21.66,22.19],[23.44,24.35],[25.21,25.51],[26.74,26.99],[27.8,28.31]],"w":[0.05,0.11,0.35,1,0.93,0.93,0.32,0.3,1,0.78,0.98,0.97,0.96,0.87,0.95,0.65,0.86,0.74,0.74,0.18,0.88,0.64,0.72,1,0.83,0.91,0.59,0.72,0.65,0.65,0.15,0.12,0.18,0.82,0.94,1,0.76,0.9,0.88,0.87,0.65,0.9,0.93,0.96,0.78,1,0.84,0.13,0.12,0.12,0.14,0.13,0.14,0.11,1,0.91,0.83,1,0.53,0.9,0.81,0.78,1,0.82,0.53,0.47,0.58,0.7,0.88,0.93,0.78,0.72,0.99,0.89,0.68,0.26,1,0.94,1,0.99,0.46,1,1,0.81,0.11,0.12,0.14,0.13,0.15,0.96,1,0.84,1,0.97,0.94,0.82,0.75,0.63,0.2,0.85,1,1,0.82,0.8,0.81,0.61,0.92,1,0.96,0.76,0.6,0.13,0.11,0.14,0.11,0.15,0.85,1,0.98,0.79,0.81,0.92,0.99,0.99,0.79,0.1,0.13,0.12,0.23,0.86,1,1,1,0.76,0.67,0.78,0.65,0.85,0.91,0.75,0.83,1,0.86,0.71,0.81,0.88,1,1,0.68,0.11,0.1,0.1,0.1,0.13,0.76,1,1,1,1,0.36,0.15,0.58,1,1,0.32,1,0.6,0.28,1,0.66,1,0.75,0.67,0.11,0.1,0.09,0.12,0.8,0.75,0.76,0.76,0.58,0.47,0.51,0.83,0.9,1,0.32,0.12,0.11,0.11,0.1,0.11,0.12,0.14,0.34,1,0.9,1,0.81,0.82,0.61,0.14,1,1,0.74,0.91,1,1,0.93,0.54,1,0.73,0.55,0.1,1,1,0.52,0.86,0.55,1,1,0.16,0.11,0.13,0.14,1,0.51,0.22,0.93,0.65,0.7,0.41,1,1,1,0.22,0.86,0.86,0.36,0.7,0.59,0.69,0.66,0.68,0.62,0.56,0.71,0.91,0.4,0.52,1,1,0.67,1,0.78,0.58,0.78,1,0.94,0.16,0.1,0.11,0.1,0.1,0.12,0.1]},{"d":52.24,"p":[[2.74,3.53],[6.35,6.85],[6.86,7.12],[7.13,7.43],[17.26,17.61],[18.13,18.38],[22.11,22.55],[23.04,23.44],[24.21,24.48],[24.97,25.7],[27.12,27.53],[28.45,28.92],[29.89,30.12],[34.39,34.86],[37.78,38.35],[40.79,41.48]],"w":[0.03,0.73,0.75,1,0.91,0.24,0.94,1,1,1,0.83,0.82,0.78,0.17,0.79,0.72,0.55,0.53,0.38,0.54,0.76,0.61,0.12,0.12,0.12,0.13,0.13,0.12,0.52,0.88,0.52,0.62,0.56,0.17,1,0.59,0.41,0.55,1,0.61,0.63,0.43,0.51,1,0.98,0.92,0.25,0.66,0.86,0.85,0.65,0.13,0.13,0.14,0.15,0.11,0.17,0.13,0.13,0.56,0.73,0.84,0.8,0.58,0.87,0.85,0.77,0.64,0.59,0.12,0.18,0.15,0.71,0.75,0.51,0.62,0.65,0.46,0.68,0.4,0.72,0.77,0.92,0.89,1,1,0.67,0.89,0.68,0.23,0.17,0.2,0.14,0.74,0.56,0.93,0.94,1,0.93,0.32,0.68,0.46,1,1,0.98,1,0.72,0.16,0.17,0.16,0.11,0.17,0.14,0.18,0.69,0.72,0.61,0.82,0.99,0.9,0.76,0.77,0.62,0.75,0.61,0.91,0.67,0.68,0.79,0.35,1,1,1,1,0.91,0.83,0.37,0.25,0.13,0.13,0.16,0.2,0.24,0.27,0.15,0.13,0.64,0.8,0.86,0.88,0.93,0.99,0.99,0.79,0.5,0.19,0.16,0.53,0.81,1,0.76,1,1,0.79,0.46,0.83,0.34,1,1,1,0.92,0.8,0.66,0.61,0.99,0.95,0.19,0.11,0.08,0.14,0.9,0.88,0.88,0.7,0.11,0.11,0.1,0.33,1,0.92,0.81,0.76,0.24,0.15,0.11,0.72,1,0.95,0.4,0.15,0.13,0.12,0.14,0.14,0.13,1,1,1,1,1,1,1,0.76,1,1,0.85,0.24,0.1,0.11,0.15,0.9,1,0.97,0.56,0.7,0.77,0.71,0.15,0.12,0.13,0.15,0.3,0.29,0.17,0.15,0.15,1,1,0.21,0.14,0.99,0.95,0.66,1,0.66,0.78,1,1,0.97,0.76,0.45,0.55,0.76,0.62,0.94,0.82,0.94,1,0.53,0.66,0.98,1,1,0.83,0.81,0.2,0.7,0.97,0.88,1,0.82,0.2,0.15,0.16,0.15,0.12,0.13,0.12,0.17,0.13,1,1,1,1,1,1,0.23,1,1,1,1,0.85,1,1,0.8,0.7,0.69,0.54,0.78,0.78,1,0.48,0.12,0.12,0.12,0.13,1,1,0.78,1,0.99,1,0.68,0.86,0.73,0.88,1,0.64,0.6,0.2,0.78,0.72,0.79,0.62,0.12,0.15,0.13,0.13,0.13,0.13,0.12,0.18,0.13,1,1,0.18,1,0.94,0.8,0.75,0.66,0.7,0.61,0.8,0.86,0.93,0.78,0.83,0.75,0.89,0.83,0.65,0.52,0.74,0.77,0.42,1,0.57,0.58,1,0.93,0.85,0.95,0.62,0.86,0.87,0.74,1,1,0.72,0.76,0.65,1,0.35,1,0.88,1,0.71,0.15,0.3,0.74,0.95,1,0.83,0.9,0.4,1,0.83,1,0.77,0.83,0.38,0.77,1,0.94,1,0.94,0.4,0.84,1,0.9,0.76,1,1,0.96,0.93,0.96,0.74,1,1,1,1,1,0.76,0.56,0.21,0.24]},{"d":34.83,"p":[[6.16,6.6],[9.45,10.02],[11.38,11.73],[14.38,15.25],[17.43,17.84],[19.18,19.49],[21.26,21.99],[26.4,26.72],[28.33,28.85],[32.11,32.68],[34.26,34.52]],"w":[0.07,0.88,0.94,1,1,1,0.86,0.85,0.35,0.17,0.88,0.98,1,1,0.21,0.18,0.14,0.16,0.17,0.14,0.19,0.17,0.18,0.13,1,0.84,0.78,1,1,0.68,0.96,0.75,0.77,0.81,0.79,0.21,0.76,0.62,0.97,0.87,0.54,0.68,0.87,1,0.83,0.88,0.8,0.79,0.55,0.15,0.14,0.13,0.17,0.88,0.89,0.89,0.82,0.72,0.88,0.7,0.88,0.66,0.84,0.79,0.79,0.76,1,1,0.96,0.76,0.76,0.79,0.33,0.58,0.57,0.17,0.12,0.13,0.12,0.13,1,1,0.92,0.82,0.92,1,1,1,1,0.77,0.6,0.13,0.13,0.21,0.59,0.59,1,1,1,0.23,0.39,1,0.68,0.6,0.53,0.73,0.91,0.82,0.73,0.79,0.72,0.81,0.79,0.77,0.64,0.11,0.11,0.11,0.12,0.11,0.12,0.5,0.88,0.62,1,1,1,0.54,0.82,0.78,0.72,0.36,0.86,0.62,0.86,1,0.79,0.44,0.17,0.15,0.13,0.12,0.73,1,0.53,0.86,0.76,0.79,0.73,0.83,0.54,0.66,0.55,0.23,0.11,0.14,0.14,0.91,1,0.9,0.86,0.72,1,0.98,1,1,1,0.93,0.66,0.6,0.13,0.11,0.12,0.11,0.13,0.38,1,0.78,0.43,0.82,0.98,1,0.87,0.19,1,1,0.49,0.91,0.19,0.36,0.91,0.87,0.18,0.14,0.88,0.62,0.92,0.82,0.77,0.81,0.83,1,0.6,0.1,0.93,1,0.88,0.91,0.73,1,0.94,0.14,0.13,0.76,0.87,0.54,0.88,0.83,0.97,0.93,0.85,0.89,0.65,0.74,0.65,0.11,0.15,0.14,0.12,0.12,1,1,1,1,0.89,0.74,0.88,0.92,1,0.84,0.96,0.31,0.75,0.82,0.76,0.87,0.27,1,1,1,0.92,0.92,0.76,0.6,0.7,0.82,0.15,0.12,0.14,0.12,0.38,1,1,1,0.84,0.75,0.94,0.74,1,1,1,0.96,0.67,0.22,0.14,0.14,0.14,0.13]},{"d":37.15,"p":[[3.66,3.94],[5.24,5.97],[7.39,7.83],[10.13,10.49],[10.84,11.11],[15.59,17.07],[18.38,18.64],[19.98,20.31],[21.71,22.09],[23.5,23.8],[26.65,27.5],[32.74,33.59],[35.14,35.43]],"w":[0.02,1,1,0.79,0.4,0.61,0.7,0.35,1,1,0.82,0.85,0.7,0.47,1,0.79,0.53,0.98,1,0.93,0.74,0.67,0.78,0.61,0.49,0.64,0.91,0.83,0.76,0.34,0.12,0.36,0.94,0.79,0.86,0.95,1,1,0.74,0.57,0.75,0.4,0.11,0.12,0.11,0.12,0.1,0.24,1,0.96,0.81,0.91,0.99,0.7,0.92,0.61,0.37,0.74,0.73,0.14,0.11,0.13,0.56,0.74,0.19,0.97,0.78,0.47,1,0.82,0.74,0.91,0.94,0.9,0.83,0.57,1,1,0.73,0.8,0.49,0.14,0.12,0.15,0.13,0.14,0.16,0.12,0.18,1,1,1,1,1,0.38,0.87,1,0.88,1,0.96,0.93,0.79,0.99,1,0.84,0.56,0.69,0.35,0.24,1,1,1,1,1,0.32,0.18,1,1,1,1,1,0.61,1,1,0.14,0.12,0.14,0.13,0.14,0.14,0.12,0.14,0.13,0.11,0.14,0.12,1,1,0.58,0.57,0.8,0.8,0.14,0.16,0.64,1,0.73,0.14,0.13,1,0.96,0.99,0.24,0.69,0.79,0.54,0.64,0.46,0.38,0.37,0.12,0.12,0.86,0.95,0.88,1,1,0.93,0.65,0.72,0.73,0.9,0.18,0.15,0.12,0.11,0.49,0.92,0.81,0.36,0.76,0.74,0.87,0.99,0.76,1,0.75,0.85,0.12,0.14,0.87,0.89,0.64,0.85,0.85,0.86,0.46,0.61,0.17,0.8,0.57,0.68,0.61,0.16,0.74,0.82,0.82,1,0.44,0.78,0.77,0.5,0.67,0.28,0.11,0.13,0.11,0.11,0.11,0.14,0.99,1,1,1,0.54,0.27,0.82,0.21,1,1,0.84,0.65,0.73,0.78,0.62,0.95,0.96,0.75,1,0.72,0.14,0.68,0.84,0.97,0.88,0.76,0.93,0.29,0.67,0.63,0.14,0.75,0.67,0.74,0.74,0.79,1,0.73,1,0.97,0.75,0.67,0.12,0.13,0.12,0.13,0.14,0.11,0.51,0.81,0.8,0.75,0.69,0.58,0.63,0.66,0.99,0.9,0.68,0.84,0.83,0.11,0.09,1,1,0.83,0.63,0.89,0.3,0.8,0.99,1,0.78,0.39,0.12,0.12,0.14]},{"d":23.12,"p":[[3.05,3.48],[5.64,6.52],[8.57,9.09],[9.44,9.82],[10.91,11.25],[12.91,13.53],[18.33,18.74]],"w":[0.05,0.1,0.13,0.75,0.99,0.98,0.27,0.79,0.64,0.42,0.19,0.35,0.72,1,0.87,1,0.95,0.88,0.19,1,1,0.72,0.2,0.83,0.48,0.17,0.18,0.61,1,1,1,0.93,1,0.57,0.15,0.77,0.95,0.88,1,1,0.83,0.78,0.83,0.99,0.96,0.15,0.17,0.13,0.18,0.16,0.14,0.47,0.96,1,0.83,0.93,0.62,0.67,0.57,0.68,0.58,0.84,1,0.69,0.73,0.87,1,1,0.23,0.19,0.14,0.15,1,1,1,0.24,0.16,0.16,0.91,0.9,0.53,0.63,0.55,1,0.7,0.79,0.57,0.16,0.16,1,1,1,0.18,0.58,0.96,1,1,0.95,0.94,0.82,0.38,0.72,0.56,0.15,0.14,0.14,0.19,0.31,0.99,0.74,0.72,0.71,0.82,0.69,0.57,0.8,0.52,0.48,0.95,0.79,0.4,1,1,0.39,0.46,0.53,1,0.99,0.72,0.95,0.97,0.88,0.24,0.69,0.63,0.76,0.66,0.25,1,0.27,0.75,0.68,0.6,1,0.34,0.42,0.18,0.2,0.2,0.3,0.28,0.5,0.96,1,0.97,0.53,0.97,0.63,0.86,0.83,0.22,0.72,0.26,0.65,0.93,0.99,0.2,0.69,0.68,0.63,0.97,1,0.87,0.76,1,1,0.75,1,0.93,0.58,0.3,0.18,0.17,0.16]},{"d":23.49,"p":[[1.03,1.52],[3.15,3.4],[4.41,4.7],[6.32,7.13],[7.58,7.84],[8.33,8.71],[10.2,11.27],[13.68,13.93],[16.46,17.35],[20.83,21.7],[22.13,22.43]],"w":[0.06,0.32,0.62,0.81,0.64,1,1,0.94,0.24,0.16,0.17,0.2,1,0.95,0.58,0.68,0.79,0.75,0.8,0.87,0.83,0.87,0.83,0.54,0.21,0.22,0.19,0.92,1,0.88,0.89,0.62,0.71,0.72,0.86,0.28,0.17,0.96,1,1,0.89,0.17,1,1,0.42,0.85,0.81,1,1,0.76,0.56,0.14,0.14,0.14,0.14,0.19,0.6,1,1,0.91,0.41,0.15,0.77,1,1,0.76,0.73,0.14,0.14,0.91,0.95,0.86,0.85,1,1,0.71,0.4,0.74,0.76,0.91,1,0.35,0.2,0.15,0.17,0.15,0.15,0.15,0.19,0.81,1,1,1,0.82,0.53,0.52,0.58,0.54,0.44,0.86,0.8,0.74,0.72,0.55,0.41,0.89,1,0.62,0.67,0.19,0.63,1,0.67,0.63,0.47,0.55,0.64,0.66,0.37,0.63,0.58,0.64,0.87,0.72,0.99,0.86,0.56,0.52,0.67,0.51,0.83,0.32,0.17,0.19,0.15,0.13,0.19,0.16,0.95,0.76,0.27,0.83,0.79,0.17,0.77,0.2,0.69,0.9,0.78,0.5,0.52,0.39,0.89,0.91,0.92,0.81,0.93,0.94,0.94,0.8,0.95,1,0.6,0.85,1,1,0.18,0.16,0.16,0.18,0.15,0.15,1,1,0.82,0.59,0.41,0.17,0.93,1,0.77,0.89,0.55,0.2,0.17,0.18,0.18]}];
+const cv=document.getElementById('tcv'),cx=cv.getContext('2d'),names=document.getElementById('tnames'),cap=document.getElementById('tcap');
+const tnp=document.getElementById('tnp'),tsec=document.getElementById('tsec'),trest=document.getElementById('trest'),tclock=document.getElementById('tclock'),toast=document.getElementById('toast');
+const BPS=8;const bins=[];let T=0,P=0,PS=0;
+TD.forEach((n,ni)=>{n.w.forEach((v,k)=>{const t=k/BPS;const inP=n.p.some(([a,b])=>t>=a&&t<b);bins.push({ni,t,g:T+t,v,inP})});T+=n.d;P+=n.p.length;PS+=n.p.reduce((a,[x,y])=>a+y-x,0)});
+const starts=[];{let acc=0;TD.forEach(n=>{starts.push(acc);acc+=n.d})}
+TD.forEach((n,ni)=>{const sp=document.createElement('span');sp.textContent=(ni+1)+' · '+TAKES[ni].proj;names.appendChild(sp)});
+const nsp=[...names.children];
+let c=0,cT=0,head=0,play=null,restored=new Set(),lit=-1,W=0,H=0;
+function fit(){const r=cv.getBoundingClientRect();const d=Math.min(devicePixelRatio,2);W=r.width;H=r.height;cv.width=W*d;cv.height=H*d;cx.setTransform(d,0,0,d,0,0)}
+addEventListener('resize',fit);fit();
+const bw=()=>W/bins.length;
+function xs(){const w=bw();let x=0;const out=new Float32Array(bins.length+1);for(let k=0;k<bins.length;k++){out[k]=x;x+=bins[k].inP?w*(1-c):w}out[bins.length]=x;return out}
+const fmt=x=>`${Math.floor(x/60)}:${String(Math.floor(x%60)).padStart(2,'0')}`;
+function draw(){
+  c+=(cT-c)*.08;const X=xs();cx.clearRect(0,0,W,H);const w=bw(),mid=H/2;
+  const hk=Math.floor(head*BPS);
+  for(let k=0;k<bins.length;k++){const b=bins[k],x=X[k],ww=X[k+1]-x;if(ww<.2)continue;
+    if(b.inP){const a=(.32+.12*Math.sin(performance.now()/300+k))*(1-c);cx.fillStyle=`rgba(36,51,255,${a})`;cx.fillRect(x,8,ww,H-16);cx.fillStyle=`rgba(36,51,255,${(1-c)})`;cx.fillRect(x,0,ww,4);cx.fillRect(x,H-4,ww,4);continue}
+    const h=Math.max(1.5,Math.pow(b.v,1.8)*H*.44);const past=bins[k].g<=head+.001;
+    cx.fillStyle=past?'#2433ff':'#0c0c0d';cx.globalAlpha=past?1:.82;cx.fillRect(x+ww*.18,mid-h,Math.max(1,ww*.64),h*2);cx.globalAlpha=1}
+  /* note dividers */
+  cx.fillStyle='#7b7b7e';starts.forEach((s0,ni)=>{if(!ni)return;const k=Math.round(s0*BPS);let kk=bins.findIndex(b=>b.ni===ni);cx.fillRect(X[kk]-1,6,1,H-12)});
+  /* playhead */
+  let hx=0;{let kk=bins.findIndex(b=>b.g>=head);if(kk<0)kk=bins.length;hx=X[kk]}
+  cx.fillStyle='#0c0c0d';cx.fillRect(hx-1,0,2,H);cx.beginPath();cx.arc(hx,6,5,0,7);cx.fill();
+  /* names follow segments */
+  nsp.forEach((sp,ni)=>{const kk=bins.findIndex(b=>b.ni===ni);sp.style.left=X[kk]+'px';sp.style.display=(innerWidth<760&&ni%2)?'none':''});
+  const ni=Math.max(0,starts.findLastIndex?starts.findLastIndex(s0=>s0<=head):starts.filter(s0=>s0<=head).length-1);
+  nsp.forEach((sp,k)=>sp.classList.toggle('on',k===ni));
+  const shown=T-PS*c;tclock.textContent=`${fmt(head-(c>.5?pausedBefore(head):0))} / ${fmt(shown)}${c>.5?' · Flow cut '+PS.toFixed(1)+'s':''}`;
+  /* counters: pauses passed */
+  let np=0,sec=0;TD.forEach((n,k)=>n.p.forEach(([a,b])=>{if(starts[k]+a<=head){np++;sec+=b-a}}));
+  tnp.textContent=np;tsec.textContent=sec.toFixed(1);
+  if(ni!==lit){lit=ni;cap.innerHTML=`<b>${TAKES[ni].proj}.</b> ${TAKES[ni].pol.replace('|','')} <span style="color:var(--mute)">That's the version Flow writes. The gaps on the tape are where the real story is. Tap to listen.</span>`}
+  requestAnimationFrame(draw)}
+function pausedBefore(g){let s=0;TD.forEach((n,k)=>n.p.forEach(([a,b])=>{const A=starts[k]+a,Bb=starts[k]+b;if(Bb<=g)s+=b-a;else if(A<g)s+=g-A}));return s}
+requestAnimationFrame(draw);
+/* scroll scrubs the playhead */
+ScrollTrigger.create({trigger:'#tape',start:'top top',end:'bottom bottom',onUpdate:st=>{if(!play)head=st.progress*T}});
+/* tap to hear from that point */
+function gAt(px){const X=xs();let k=0;while(k<bins.length&&X[k+1]<px)k++;return bins[Math.min(k,bins.length-1)].g}
+function stopT(){if(play){play.a.pause();play=null;window.__lvl=null}}
+cv.addEventListener('click',e=>{const r=cv.getBoundingClientRect();const g=gAt(e.clientX-r.left);let ni=starts.filter(s0=>s0<=g).length-1;stopT();
+  const a=new Audio(TAKES[ni].audio);a.currentTime=g-starts[ni];play={a,ni};a.play().catch(()=>{});
+  const lp=()=>{if(!play||play.a!==a)return;head=starts[ni]+a.currentTime;
+    if(c>.5){const n=TD[ni];const hit=n.p.find(([x,y])=>a.currentTime>=x&&a.currentTime<y-.05);if(hit)a.currentTime=hit[1]}
+    else{TD[ni].p.forEach(([x,y],k)=>{if(a.currentTime>=y&&!restored.has(ni+'-'+k)){restored.add(ni+'-'+k);rest+=y-x;trest.textContent=rest.toFixed(1)+'s'}})}
+    if(a.ended){play=null;return}requestAnimationFrame(lp)};requestAnimationFrame(lp)});
+let rest=0;
+ScrollTrigger.create({trigger:'#tape',start:'top bottom',end:'bottom top',onLeave:stopT,onLeaveBack:stopT});
+/* undo / redo Flow */
+let tt=0;function say(m){toast.textContent=m;toast.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('on'),2400)}
+function undo(){if(typeof setFlow==='function'&&flowOn)setFlow(false);cT=0;say('Undone. Every pause is back, and so is the story in it.')}
+function redo(){if(typeof setFlow==='function'&&!flowOn)setFlow(true);cT=1;say(`Flow removed ${P} pauses. ${PS.toFixed(1)} seconds of me, gone.`)}
+document.getElementById('tundo').addEventListener('click',undo);document.getElementById('tredo').addEventListener('click',redo);
+addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='z'){e.preventDefault();e.shiftKey?redo():undo()}});
+window.__tapeFlow=on=>{cT=on?1:0};
+})();
+
 /* stop when the take scrolls away */
 ScrollTrigger.create({trigger:'#takes',start:'top bottom',end:'bottom top',onLeave:stop,onLeaveBack:stop});
 })();
