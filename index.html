@@ -15,7 +15,7 @@
 :root{
   --paper:#eeeeec;
   --ink:#0c0c0d;
-  --mute:#7b7b7e;
+  --mute:#5c5c61;
   --rule:rgba(12,12,13,.14);
   --raw:#2433ff;
   --raw-soft:rgba(36,51,255,.1);
@@ -102,12 +102,12 @@ header .r{display:flex;gap:28px;font-variant-numeric:tabular-nums}
 #fend .acts{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 #fsub{font:600 clamp(18px,2vw,30px)/1.25 var(--display);letter-spacing:-.02em;text-align:center;min-height:2.6em;max-width:36ch;margin:0 auto;text-wrap:balance}
 #fsub .f{color:var(--raw);font-style:italic}
-#fsub .o{color:rgba(12,12,13,.25)}
+#fsub .o{color:rgba(12,12,13,.42)}
 #fprog{position:relative;height:3px;background:rgba(12,12,13,.12);margin-top:16px}
 #fprog i{position:absolute;left:0;top:0;bottom:0;background:var(--raw);width:0}
 #fprog span{position:absolute;top:-4px;width:1px;height:11px;background:var(--ink)}
 .pbtn.watch{background:var(--ink)}
-@media (max-width:760px){#film svg{height:44svh}#fsub{font-size:18px}}
+@media (max-width:760px){.lbl{font-size:10px}#film svg{height:44svh}#fsub{font-size:18px}}
 #dial{padding-block:16vh 12vh;border-top:1px solid rgba(12,12,13,.12)}
 #dial .kick{color:var(--mute);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:3vh}
 #dial h2{font:800 clamp(44px,8vw,140px)/.86 var(--display);letter-spacing:-.055em;margin:0 0 2vh;text-transform:uppercase}
@@ -161,7 +161,7 @@ header .r{display:flex;gap:28px;font-variant-numeric:tabular-nums}
 #mani{padding-block:22vh}
 #mani .lbl{color:var(--mute);margin-bottom:28px;display:block}
 #mani p{font:600 clamp(30px,4.4vw,72px)/1.04 var(--display);letter-spacing:-.035em;margin:0;max-width:22ch;text-wrap:balance}
-#mani .w{color:rgba(12,12,13,.14)}
+#mani .w{color:rgba(12,12,13,.2)}
 #mani .w.raw{font-style:italic}
 
 /* takes */
@@ -226,7 +226,7 @@ header .r{display:flex;gap:28px;font-variant-numeric:tabular-nums}
 .rawq.playing .rw.lit{opacity:1!important}
 
 /* Flow switch, styled like Flow's floating pill */
-#flow{position:fixed;z-index:30;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);
+#flow{position:fixed;z-index:60;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);
   display:flex;align-items:center;gap:12px;padding:8px 8px 8px 16px;border-radius:999px;background:var(--ink);color:var(--paper);
   box-shadow:0 10px 40px rgba(12,12,13,.25);font:500 11px var(--mono);letter-spacing:.08em;white-space:nowrap}
 #fbars{display:flex;gap:3px;align-items:center;height:16px}
@@ -378,7 +378,7 @@ footer .bar{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;m
 </section>
 <div id="toast" role="status" aria-live="polite"></div>
 <div id="film" class="g" role="dialog" aria-modal="true" aria-label="Story film">
-  <div class="fbar"><div class="ftitle"><span class="lbl" id="fnum"></span><b id="fproj"></b><span class="lbl fch" id="fch">What I built</span></div><button id="fclose" type="button">Close · Esc</button></div>
+  <div class="fbar"><div class="ftitle"><span class="lbl" id="fnum"></span><b id="fproj"></b><span class="lbl fch" id="fch">What I built</span></div><div style="display:flex;gap:8px;align-items:center"><button class="kbd" id="fflow" type="button">Flow: Off</button><button id="fclose" type="button">Close · Esc</button></div></div>
   <div class="fstage"><svg id="fsvg" viewBox="0 0 600 440" role="img" aria-label="Story illustration"></svg>
     <div id="fend"><span class="lbl">What I kept</span><h3 id="fles"></h3><div class="acts"><button class="kbd" id="fnext" type="button">Next story →</button><button class="kbd" id="fagain" type="button">Watch again</button></div></div></div>
   <div><p id="fsub" aria-live="off"></p><div id="fprog"><i></i><span style="left:30%"></span><span style="left:68%"></span></div><div class="lbl" style="display:flex;justify-content:space-between;margin-top:10px;color:var(--mute)"><span>Narrated by me · unedited voice note · the blue words are what Flow deletes</span><span id="ftime">0:00</span></div></div>
@@ -558,6 +558,7 @@ const viewW=()=>2*Math.tan(cam.fov*Math.PI/360)*cam.position.z*cam.aspect;
 
 /* ---------- motion ---------- */
 gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.config({ignoreMobileResize:true});
 let lenis=null;
 if(!reduce&&window.Lenis){lenis=new Lenis({lerp:.09,smoothWheel:true});lenis.on('scroll',ScrollTrigger.update);
   gsap.ticker.add(t=>lenis.raf(t*1000));gsap.ticker.lagSmoothing(0)}
@@ -766,7 +767,7 @@ gsap.utils.toArray('.take').forEach((s,i)=>{
   gsap.from(s.querySelectorAll('.meta>*,.steps,.pA>*'),{y:20,opacity:0,stagger:.07,duration:.8,ease:'power3.out',scrollTrigger:{trigger:s,start:'top 75%'}});
   const setStep=k=>st.forEach((e,j)=>e.classList.toggle('on',j===k));
   const mob=innerWidth<760;
-  const tl=gsap.timeline({defaults:{ease:'none'},scrollTrigger:{trigger:s,start:'top top',end:()=>'+='+innerHeight*(mob?2:2.4),pin:true,scrub:.6,anticipatePin:1,
+  const tl=gsap.timeline({defaults:{ease:'none'},scrollTrigger:{trigger:s,start:'top top',end:()=>'+='+innerHeight*(mob?2:2.4),pin:true,scrub:.6,
      onUpdate:self=>{const p=self.progress;setStep(p<.3?0:p<.68?1:2);activeTake=i;activeP=p;
        st[0].style.setProperty('--k',Math.min(1,p/.3));st[1].style.setProperty('--k',Math.min(1,Math.max(0,(p-.3)/.38)));st[2].style.setProperty('--k',Math.min(1,Math.max(0,(p-.68)/.3)));
        B.rawT=p<.28?.06:p<.7?Math.min(1,(p-.28)*4):.25;},
@@ -820,7 +821,7 @@ gsap.from('#index h2',{yPercent:30,opacity:0,duration:1.1,ease:'expo.out',scroll
 gsap.from('#plan h2',{yPercent:30,opacity:0,duration:1.1,ease:'expo.out',scrollTrigger:{trigger:'#plan',start:'top 75%'}});
 gsap.from('footer .big',{yPercent:30,opacity:0,duration:1.1,ease:'expo.out',scrollTrigger:{trigger:'footer',start:'top 80%'}});
 if(reduce)heroIn();
-addEventListener('load',()=>ScrollTrigger.refresh());
+addEventListener('load',()=>ScrollTrigger.refresh());if(document.fonts)document.fonts.ready.then(()=>ScrollTrigger.refresh());
 /* ---------- voice player ---------- */
 const P={i:-1,audio:null,ctx:null,an:null,buf:null,raf:0,t0:0,dur:0,preview:false,src:null,own:{}};
 const fmt=x=>`${Math.floor(x/60)}:${String(Math.floor(x%60)).padStart(2,'0')}`;
@@ -877,14 +878,16 @@ function filmOpen(i){
   if(lenis)lenis.stop();gsap.to(FILM.el,{autoAlpha:1,duration:.45,ease:'power2.out'});
   const a=new Audio(t.audio);FILM.a=a;a.crossOrigin='anonymous';let an=null;
   try{FILM.ctx=FILM.ctx||new (window.AudioContext||window.webkitAudioContext)();const sr=FILM.ctx.createMediaElementSource(a);an=FILM.ctx.createAnalyser();an.fftSize=512;sr.connect(an);an.connect(FILM.ctx.destination);FILM.ctx.resume()}catch(e){}
-  const data=new Uint8Array(256);let quiet=0,last=performance.now();
+  const data=new Uint8Array(256);let quiet=0,last=performance.now(),skipped=0;const ffl=document.getElementById('fflow');
   const lp=now=>{if(FILM.a!==a)return;const d=a.duration||1,p=Math.min(1,a.currentTime/d);
     let l=.3;if(an){an.getByteTimeDomainData(data);let m=0;for(const v of data)m=Math.max(m,Math.abs(v-128));l=Math.min(1,m/70)}
-    if(flowOn){if(l<.06){quiet+=now-last;if(quiet>160){a.currentTime=Math.min(d,a.currentTime+.25);quiet=0}}else quiet=0}last=now;
+    const pz=(window.__TD&&window.__TD[i])?window.__TD[i].p:[];const inP=pz.find(([x,y])=>a.currentTime>=x&&a.currentTime<y-.03);
+    if(flowOn&&inP){a.currentTime=inP[1];skipped++}last=now;
+    ffl.textContent=flowOn?`Flow: On · ${skipped} pauses cut`:'Flow: Off · every pause kept';ffl.style.background=flowOn?'var(--raw)':'none';ffl.style.color=flowOn?'var(--paper)':'var(--ink)';ffl.style.borderColor=flowOn?'var(--raw)':'var(--ink)';
     FILM.up(p);FILM.bar.style.width=(p*100)+'%';FILM.ch.textContent=p<.3?'What I built':p<.68?'What went wrong':'What I kept';
     const k=Math.min(words.length-1,Math.floor(p*words.length));const w0=Math.max(0,k-6),w1=Math.min(words.length,k+5);
     FILM.sub.innerHTML=words.slice(w0,w1).map((x,j)=>{const jj=w0+j;if(flowOn&&x.f)return '';return `<span class="${jj>k?'o':''}${x.f?' f':''}">${x.w}</span>`}).join(' ');
-    FILM.svg.classList.toggle('glitch',!flowOn&&words[k].f);FILM.svg.style.transform=`scale(${1+l*.02})`;
+    FILM.svg.classList.toggle('glitch',!flowOn&&(!!inP||words[k].f));FILM.svg.style.transform=`scale(${1+l*.02})`;
     FILM.tm.textContent=`${fmt(a.currentTime)} / ${fmt(d)}`;
     if(a.ended){FILM.svg.classList.remove('glitch');FILM.up(1);gsap.to(FILM.end,{autoAlpha:1,duration:.6});return}
     requestAnimationFrame(lp)};
@@ -893,6 +896,7 @@ function filmOpen(i){
 function filmClose(quick){if(FILM.a){FILM.a.pause();FILM.a=null}FILM.svg&&FILM.svg.classList.remove('glitch');if(quick&&FILM.i<0)return;
   gsap.to(FILM.el,{autoAlpha:0,duration:quick?0:.35});if(lenis)lenis.start();FILM.i=-1}
 document.getElementById('fclose').addEventListener('click',()=>filmClose());
+document.getElementById('fflow').addEventListener('click',()=>document.getElementById('fsw').click());
 document.getElementById('fagain').addEventListener('click',()=>{const i=FILM.i;filmOpen(i)});
 document.getElementById('fnext').addEventListener('click',()=>{const i=(FILM.i+1)%TAKES.length;filmOpen(i)});
 addEventListener('keydown',e=>{if(e.key==='Escape'&&FILM.i>=0)filmClose()});
@@ -927,7 +931,7 @@ set(1,false);
 /* ---------- the tape: real waveform of all six notes, pauses marked ---------- */
 (()=>{
 const TD=[{"d":33.43,"p":[[3.79,4.01],[5.88,6.59],[10.43,11.08],[13.87,14.48],[15.63,16.03],[18.61,19.33],[21.66,22.19],[23.44,24.35],[25.21,25.51],[26.74,26.99],[27.8,28.31]],"w":[0.05,0.11,0.35,1,0.93,0.93,0.32,0.3,1,0.78,0.98,0.97,0.96,0.87,0.95,0.65,0.86,0.74,0.74,0.18,0.88,0.64,0.72,1,0.83,0.91,0.59,0.72,0.65,0.65,0.15,0.12,0.18,0.82,0.94,1,0.76,0.9,0.88,0.87,0.65,0.9,0.93,0.96,0.78,1,0.84,0.13,0.12,0.12,0.14,0.13,0.14,0.11,1,0.91,0.83,1,0.53,0.9,0.81,0.78,1,0.82,0.53,0.47,0.58,0.7,0.88,0.93,0.78,0.72,0.99,0.89,0.68,0.26,1,0.94,1,0.99,0.46,1,1,0.81,0.11,0.12,0.14,0.13,0.15,0.96,1,0.84,1,0.97,0.94,0.82,0.75,0.63,0.2,0.85,1,1,0.82,0.8,0.81,0.61,0.92,1,0.96,0.76,0.6,0.13,0.11,0.14,0.11,0.15,0.85,1,0.98,0.79,0.81,0.92,0.99,0.99,0.79,0.1,0.13,0.12,0.23,0.86,1,1,1,0.76,0.67,0.78,0.65,0.85,0.91,0.75,0.83,1,0.86,0.71,0.81,0.88,1,1,0.68,0.11,0.1,0.1,0.1,0.13,0.76,1,1,1,1,0.36,0.15,0.58,1,1,0.32,1,0.6,0.28,1,0.66,1,0.75,0.67,0.11,0.1,0.09,0.12,0.8,0.75,0.76,0.76,0.58,0.47,0.51,0.83,0.9,1,0.32,0.12,0.11,0.11,0.1,0.11,0.12,0.14,0.34,1,0.9,1,0.81,0.82,0.61,0.14,1,1,0.74,0.91,1,1,0.93,0.54,1,0.73,0.55,0.1,1,1,0.52,0.86,0.55,1,1,0.16,0.11,0.13,0.14,1,0.51,0.22,0.93,0.65,0.7,0.41,1,1,1,0.22,0.86,0.86,0.36,0.7,0.59,0.69,0.66,0.68,0.62,0.56,0.71,0.91,0.4,0.52,1,1,0.67,1,0.78,0.58,0.78,1,0.94,0.16,0.1,0.11,0.1,0.1,0.12,0.1]},{"d":52.24,"p":[[2.74,3.53],[6.35,6.85],[6.86,7.12],[7.13,7.43],[17.26,17.61],[18.13,18.38],[22.11,22.55],[23.04,23.44],[24.21,24.48],[24.97,25.7],[27.12,27.53],[28.45,28.92],[29.89,30.12],[34.39,34.86],[37.78,38.35],[40.79,41.48]],"w":[0.03,0.73,0.75,1,0.91,0.24,0.94,1,1,1,0.83,0.82,0.78,0.17,0.79,0.72,0.55,0.53,0.38,0.54,0.76,0.61,0.12,0.12,0.12,0.13,0.13,0.12,0.52,0.88,0.52,0.62,0.56,0.17,1,0.59,0.41,0.55,1,0.61,0.63,0.43,0.51,1,0.98,0.92,0.25,0.66,0.86,0.85,0.65,0.13,0.13,0.14,0.15,0.11,0.17,0.13,0.13,0.56,0.73,0.84,0.8,0.58,0.87,0.85,0.77,0.64,0.59,0.12,0.18,0.15,0.71,0.75,0.51,0.62,0.65,0.46,0.68,0.4,0.72,0.77,0.92,0.89,1,1,0.67,0.89,0.68,0.23,0.17,0.2,0.14,0.74,0.56,0.93,0.94,1,0.93,0.32,0.68,0.46,1,1,0.98,1,0.72,0.16,0.17,0.16,0.11,0.17,0.14,0.18,0.69,0.72,0.61,0.82,0.99,0.9,0.76,0.77,0.62,0.75,0.61,0.91,0.67,0.68,0.79,0.35,1,1,1,1,0.91,0.83,0.37,0.25,0.13,0.13,0.16,0.2,0.24,0.27,0.15,0.13,0.64,0.8,0.86,0.88,0.93,0.99,0.99,0.79,0.5,0.19,0.16,0.53,0.81,1,0.76,1,1,0.79,0.46,0.83,0.34,1,1,1,0.92,0.8,0.66,0.61,0.99,0.95,0.19,0.11,0.08,0.14,0.9,0.88,0.88,0.7,0.11,0.11,0.1,0.33,1,0.92,0.81,0.76,0.24,0.15,0.11,0.72,1,0.95,0.4,0.15,0.13,0.12,0.14,0.14,0.13,1,1,1,1,1,1,1,0.76,1,1,0.85,0.24,0.1,0.11,0.15,0.9,1,0.97,0.56,0.7,0.77,0.71,0.15,0.12,0.13,0.15,0.3,0.29,0.17,0.15,0.15,1,1,0.21,0.14,0.99,0.95,0.66,1,0.66,0.78,1,1,0.97,0.76,0.45,0.55,0.76,0.62,0.94,0.82,0.94,1,0.53,0.66,0.98,1,1,0.83,0.81,0.2,0.7,0.97,0.88,1,0.82,0.2,0.15,0.16,0.15,0.12,0.13,0.12,0.17,0.13,1,1,1,1,1,1,0.23,1,1,1,1,0.85,1,1,0.8,0.7,0.69,0.54,0.78,0.78,1,0.48,0.12,0.12,0.12,0.13,1,1,0.78,1,0.99,1,0.68,0.86,0.73,0.88,1,0.64,0.6,0.2,0.78,0.72,0.79,0.62,0.12,0.15,0.13,0.13,0.13,0.13,0.12,0.18,0.13,1,1,0.18,1,0.94,0.8,0.75,0.66,0.7,0.61,0.8,0.86,0.93,0.78,0.83,0.75,0.89,0.83,0.65,0.52,0.74,0.77,0.42,1,0.57,0.58,1,0.93,0.85,0.95,0.62,0.86,0.87,0.74,1,1,0.72,0.76,0.65,1,0.35,1,0.88,1,0.71,0.15,0.3,0.74,0.95,1,0.83,0.9,0.4,1,0.83,1,0.77,0.83,0.38,0.77,1,0.94,1,0.94,0.4,0.84,1,0.9,0.76,1,1,0.96,0.93,0.96,0.74,1,1,1,1,1,0.76,0.56,0.21,0.24]},{"d":34.83,"p":[[6.16,6.6],[9.45,10.02],[11.38,11.73],[14.38,15.25],[17.43,17.84],[19.18,19.49],[21.26,21.99],[26.4,26.72],[28.33,28.85],[32.11,32.68],[34.26,34.52]],"w":[0.07,0.88,0.94,1,1,1,0.86,0.85,0.35,0.17,0.88,0.98,1,1,0.21,0.18,0.14,0.16,0.17,0.14,0.19,0.17,0.18,0.13,1,0.84,0.78,1,1,0.68,0.96,0.75,0.77,0.81,0.79,0.21,0.76,0.62,0.97,0.87,0.54,0.68,0.87,1,0.83,0.88,0.8,0.79,0.55,0.15,0.14,0.13,0.17,0.88,0.89,0.89,0.82,0.72,0.88,0.7,0.88,0.66,0.84,0.79,0.79,0.76,1,1,0.96,0.76,0.76,0.79,0.33,0.58,0.57,0.17,0.12,0.13,0.12,0.13,1,1,0.92,0.82,0.92,1,1,1,1,0.77,0.6,0.13,0.13,0.21,0.59,0.59,1,1,1,0.23,0.39,1,0.68,0.6,0.53,0.73,0.91,0.82,0.73,0.79,0.72,0.81,0.79,0.77,0.64,0.11,0.11,0.11,0.12,0.11,0.12,0.5,0.88,0.62,1,1,1,0.54,0.82,0.78,0.72,0.36,0.86,0.62,0.86,1,0.79,0.44,0.17,0.15,0.13,0.12,0.73,1,0.53,0.86,0.76,0.79,0.73,0.83,0.54,0.66,0.55,0.23,0.11,0.14,0.14,0.91,1,0.9,0.86,0.72,1,0.98,1,1,1,0.93,0.66,0.6,0.13,0.11,0.12,0.11,0.13,0.38,1,0.78,0.43,0.82,0.98,1,0.87,0.19,1,1,0.49,0.91,0.19,0.36,0.91,0.87,0.18,0.14,0.88,0.62,0.92,0.82,0.77,0.81,0.83,1,0.6,0.1,0.93,1,0.88,0.91,0.73,1,0.94,0.14,0.13,0.76,0.87,0.54,0.88,0.83,0.97,0.93,0.85,0.89,0.65,0.74,0.65,0.11,0.15,0.14,0.12,0.12,1,1,1,1,0.89,0.74,0.88,0.92,1,0.84,0.96,0.31,0.75,0.82,0.76,0.87,0.27,1,1,1,0.92,0.92,0.76,0.6,0.7,0.82,0.15,0.12,0.14,0.12,0.38,1,1,1,0.84,0.75,0.94,0.74,1,1,1,0.96,0.67,0.22,0.14,0.14,0.14,0.13]},{"d":37.15,"p":[[3.66,3.94],[5.24,5.97],[7.39,7.83],[10.13,10.49],[10.84,11.11],[15.59,17.07],[18.38,18.64],[19.98,20.31],[21.71,22.09],[23.5,23.8],[26.65,27.5],[32.74,33.59],[35.14,35.43]],"w":[0.02,1,1,0.79,0.4,0.61,0.7,0.35,1,1,0.82,0.85,0.7,0.47,1,0.79,0.53,0.98,1,0.93,0.74,0.67,0.78,0.61,0.49,0.64,0.91,0.83,0.76,0.34,0.12,0.36,0.94,0.79,0.86,0.95,1,1,0.74,0.57,0.75,0.4,0.11,0.12,0.11,0.12,0.1,0.24,1,0.96,0.81,0.91,0.99,0.7,0.92,0.61,0.37,0.74,0.73,0.14,0.11,0.13,0.56,0.74,0.19,0.97,0.78,0.47,1,0.82,0.74,0.91,0.94,0.9,0.83,0.57,1,1,0.73,0.8,0.49,0.14,0.12,0.15,0.13,0.14,0.16,0.12,0.18,1,1,1,1,1,0.38,0.87,1,0.88,1,0.96,0.93,0.79,0.99,1,0.84,0.56,0.69,0.35,0.24,1,1,1,1,1,0.32,0.18,1,1,1,1,1,0.61,1,1,0.14,0.12,0.14,0.13,0.14,0.14,0.12,0.14,0.13,0.11,0.14,0.12,1,1,0.58,0.57,0.8,0.8,0.14,0.16,0.64,1,0.73,0.14,0.13,1,0.96,0.99,0.24,0.69,0.79,0.54,0.64,0.46,0.38,0.37,0.12,0.12,0.86,0.95,0.88,1,1,0.93,0.65,0.72,0.73,0.9,0.18,0.15,0.12,0.11,0.49,0.92,0.81,0.36,0.76,0.74,0.87,0.99,0.76,1,0.75,0.85,0.12,0.14,0.87,0.89,0.64,0.85,0.85,0.86,0.46,0.61,0.17,0.8,0.57,0.68,0.61,0.16,0.74,0.82,0.82,1,0.44,0.78,0.77,0.5,0.67,0.28,0.11,0.13,0.11,0.11,0.11,0.14,0.99,1,1,1,0.54,0.27,0.82,0.21,1,1,0.84,0.65,0.73,0.78,0.62,0.95,0.96,0.75,1,0.72,0.14,0.68,0.84,0.97,0.88,0.76,0.93,0.29,0.67,0.63,0.14,0.75,0.67,0.74,0.74,0.79,1,0.73,1,0.97,0.75,0.67,0.12,0.13,0.12,0.13,0.14,0.11,0.51,0.81,0.8,0.75,0.69,0.58,0.63,0.66,0.99,0.9,0.68,0.84,0.83,0.11,0.09,1,1,0.83,0.63,0.89,0.3,0.8,0.99,1,0.78,0.39,0.12,0.12,0.14]},{"d":23.12,"p":[[3.05,3.48],[5.64,6.52],[8.57,9.09],[9.44,9.82],[10.91,11.25],[12.91,13.53],[18.33,18.74]],"w":[0.05,0.1,0.13,0.75,0.99,0.98,0.27,0.79,0.64,0.42,0.19,0.35,0.72,1,0.87,1,0.95,0.88,0.19,1,1,0.72,0.2,0.83,0.48,0.17,0.18,0.61,1,1,1,0.93,1,0.57,0.15,0.77,0.95,0.88,1,1,0.83,0.78,0.83,0.99,0.96,0.15,0.17,0.13,0.18,0.16,0.14,0.47,0.96,1,0.83,0.93,0.62,0.67,0.57,0.68,0.58,0.84,1,0.69,0.73,0.87,1,1,0.23,0.19,0.14,0.15,1,1,1,0.24,0.16,0.16,0.91,0.9,0.53,0.63,0.55,1,0.7,0.79,0.57,0.16,0.16,1,1,1,0.18,0.58,0.96,1,1,0.95,0.94,0.82,0.38,0.72,0.56,0.15,0.14,0.14,0.19,0.31,0.99,0.74,0.72,0.71,0.82,0.69,0.57,0.8,0.52,0.48,0.95,0.79,0.4,1,1,0.39,0.46,0.53,1,0.99,0.72,0.95,0.97,0.88,0.24,0.69,0.63,0.76,0.66,0.25,1,0.27,0.75,0.68,0.6,1,0.34,0.42,0.18,0.2,0.2,0.3,0.28,0.5,0.96,1,0.97,0.53,0.97,0.63,0.86,0.83,0.22,0.72,0.26,0.65,0.93,0.99,0.2,0.69,0.68,0.63,0.97,1,0.87,0.76,1,1,0.75,1,0.93,0.58,0.3,0.18,0.17,0.16]},{"d":23.49,"p":[[1.03,1.52],[3.15,3.4],[4.41,4.7],[6.32,7.13],[7.58,7.84],[8.33,8.71],[10.2,11.27],[13.68,13.93],[16.46,17.35],[20.83,21.7],[22.13,22.43]],"w":[0.06,0.32,0.62,0.81,0.64,1,1,0.94,0.24,0.16,0.17,0.2,1,0.95,0.58,0.68,0.79,0.75,0.8,0.87,0.83,0.87,0.83,0.54,0.21,0.22,0.19,0.92,1,0.88,0.89,0.62,0.71,0.72,0.86,0.28,0.17,0.96,1,1,0.89,0.17,1,1,0.42,0.85,0.81,1,1,0.76,0.56,0.14,0.14,0.14,0.14,0.19,0.6,1,1,0.91,0.41,0.15,0.77,1,1,0.76,0.73,0.14,0.14,0.91,0.95,0.86,0.85,1,1,0.71,0.4,0.74,0.76,0.91,1,0.35,0.2,0.15,0.17,0.15,0.15,0.15,0.19,0.81,1,1,1,0.82,0.53,0.52,0.58,0.54,0.44,0.86,0.8,0.74,0.72,0.55,0.41,0.89,1,0.62,0.67,0.19,0.63,1,0.67,0.63,0.47,0.55,0.64,0.66,0.37,0.63,0.58,0.64,0.87,0.72,0.99,0.86,0.56,0.52,0.67,0.51,0.83,0.32,0.17,0.19,0.15,0.13,0.19,0.16,0.95,0.76,0.27,0.83,0.79,0.17,0.77,0.2,0.69,0.9,0.78,0.5,0.52,0.39,0.89,0.91,0.92,0.81,0.93,0.94,0.94,0.8,0.95,1,0.6,0.85,1,1,0.18,0.16,0.16,0.18,0.15,0.15,1,1,0.82,0.59,0.41,0.17,0.93,1,0.77,0.89,0.55,0.2,0.17,0.18,0.18]}];
-const cv=document.getElementById('tcv'),cx=cv.getContext('2d'),names=document.getElementById('tnames'),cap=document.getElementById('tcap');
+window.__TD=TD;const cv=document.getElementById('tcv'),cx=cv.getContext('2d'),names=document.getElementById('tnames'),cap=document.getElementById('tcap');
 const tnp=document.getElementById('tnp'),tsec=document.getElementById('tsec'),trest=document.getElementById('trest'),tclock=document.getElementById('tclock'),toast=document.getElementById('toast');
 const DOORS=[
  {ni:0,a:23.44,b:24.35,t:"That one hurt. I nearly left this part out."},
