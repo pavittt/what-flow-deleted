@@ -87,6 +87,27 @@ header .r{display:flex;gap:28px;font-variant-numeric:tabular-nums}
 .marq .tr span:nth-child(3n){color:#8b93ff;font-style:italic}
 
 /* manifesto */
+#dial{padding-block:16vh 12vh;border-top:1px solid rgba(12,12,13,.12)}
+#dial .kick{color:var(--mute);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:3vh}
+#dial h2{font:800 clamp(44px,8vw,140px)/.86 var(--display);letter-spacing:-.055em;margin:0 0 2vh;text-transform:uppercase}
+#dial h2 em{color:var(--raw)}
+#dial .sub{font:500 clamp(16px,1.5vw,21px)/1.45 var(--body);max-width:56ch;margin:0 0 5vh;color:#3a3a3e}
+.dl{position:relative;display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--ink);border-radius:999px;padding:5px;max-width:760px;margin-bottom:6vh;user-select:none}
+.dl button{position:relative;z-index:1;border:0;background:none;padding:16px 8px;font:600 clamp(14px,1.4vw,18px) var(--body);color:var(--ink);cursor:pointer;border-radius:999px;transition:color .35s}
+.dl button[aria-checked=true]{color:var(--paper)}
+.dl button:focus-visible{outline:2px solid var(--raw);outline-offset:2px}
+.dl .knob{position:absolute;z-index:0;top:5px;bottom:5px;left:5px;width:calc((100% - 10px)/4);border-radius:999px;background:var(--raw);transition:transform .6s cubic-bezier(.7,0,.2,1)}
+#drows{display:grid;gap:0;border-top:1px solid rgba(12,12,13,.14)}
+.drow{display:grid;grid-template-columns:minmax(140px,220px) 1fr;gap:24px;padding:22px 0;border-bottom:1px solid rgba(12,12,13,.14);align-items:baseline}
+.drow .pn{font:500 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.drow .tx{font:500 clamp(15px,1.25vw,18px)/1.55 var(--body);max-width:78ch}
+.drow .tx em.fl{color:var(--raw);font-style:italic}
+#dial[data-l="2"] .drow .tx{font:600 clamp(20px,2.2vw,32px)/1.15 var(--display);letter-spacing:-.025em}
+#dial[data-l="3"] .drow .tx{font:800 clamp(34px,5vw,80px)/.95 var(--display);letter-spacing:-.05em;text-transform:uppercase}
+#dial[data-l="3"] .drow{padding:14px 0}
+.dfoot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:3vh;color:var(--mute)}
+.dfoot b{color:var(--ink);font-variant-numeric:tabular-nums}
+@media (max-width:760px){.drow{grid-template-columns:1fr;gap:6px}.dl button{padding:13px 4px}}
 #tape{height:260vh;position:relative}
 #tape .stick{position:sticky;top:0;height:100svh;display:flex;flex-direction:column;justify-content:center;gap:3.2vh;padding-block:12vh 10vh}
 #tape .tk{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:var(--mute)}
@@ -298,6 +319,17 @@ footer .bar{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;m
     <div><div class="lbl">Why</div><p>People hesitate right before the true part. My failures live in those pauses, and so do my best lessons. Every take has my real voice note, unedited. Press play and listen to the ums.</p></div>
     <div class="end"><div class="lbl">Try the switch below</div><p>Turn Flow on to see what Wispr Flow actually wrote when I told these stories.</p></div>
   </div>
+</section>
+
+<section id="dial" class="g" data-l="1" aria-label="Choose how much time you have">
+  <div class="kick lbl"><span>For recruiters with no time</span><span>Every version is made from my own spoken words</span></div>
+  <h2>How long do <em>you have?</em></h2>
+  <p class="sub">Wispr Flow can shorten anything I say. So you choose how much of me to read: everything I actually said, ums included, all the way down to one word per project. Pick a length and the page rewrites itself.</p>
+  <div class="dl" role="radiogroup" aria-label="Reading time"><span class="knob" aria-hidden="true"></span>
+    <button type="button" role="radio" aria-checked="false" data-l="0">3 min</button><button type="button" role="radio" aria-checked="true" data-l="1">60 sec</button><button type="button" role="radio" aria-checked="false" data-l="2">10 sec</button><button type="button" role="radio" aria-checked="false" data-l="3">1 word</button>
+  </div>
+  <div id="drows"></div>
+  <div class="dfoot lbl"><span id="dnote"></span><span><b id="dwords">0</b> words · about <b id="dtime">0s</b> to read</span></div>
 </section>
 
 <div class="marq" aria-hidden="true"><div class="tr" id="mtr"></div></div>
@@ -580,7 +612,7 @@ gsap.utils.toArray('#mani .w.raw').forEach(w=>gsap.to(w,{color:'#2433ff',scrollT
 
 /* blob choreography: hero right, mani left, takes right, index small, plan centre */
 const pos=(trig,x,y,s,raw)=>ScrollTrigger.create({trigger:trig,start:'top 60%',end:'bottom 40%',onToggle:self=>{if(self.isActive){B.xT=x;B.yT=y;B.sT=s;if(raw!==undefined)B.rawT=raw}}});
-pos('#hero',.33,.55,.68,.05);pos('#mani',-.3,0,.8,.12);pos('#index',.4,-.9,.38,.35);pos('#tape',.45,1.6,.001,.1);pos('#misheard',.45,1.6,.001,.1);pos('#plan',.0,0,.65,.2);
+pos('#hero',.33,.55,.68,.05);pos('#mani',-.3,0,.8,.12);pos('#index',.4,-.9,.38,.35);pos('#dial',.45,1.6,.001,.1);pos('#tape',.45,1.6,.001,.1);pos('#misheard',.45,1.6,.001,.1);pos('#plan',.0,0,.65,.2);
 
 /* ---------- scenes: each take's project and mistake, drawn and driven by scroll ---------- */
 const NS='http://www.w3.org/2000/svg',INK='#0c0c0d',RAWC='#2433ff',MUTE='#b9b9bd',ERR='#ff3b2f',PAPER='#eeeeec';
@@ -811,6 +843,29 @@ document.querySelectorAll('.pbtn').forEach(b=>b.addEventListener('click',()=>pla
 document.querySelectorAll('.own input').forEach(inp=>inp.addEventListener('change',()=>{const f=inp.files&&inp.files[0];if(!f)return;const i=+inp.dataset.i;
   P.own[i]=URL.createObjectURL(f);const s=ui(i);s.querySelector('.pnote').textContent=f.name;stop();play(i)}));
 sw.addEventListener('click',()=>{if(P.i>=0){const i=P.i;stop();play(i)}});
+
+
+/* ---------- the time dial: the same six stories at four lengths ---------- */
+(()=>{
+const ONE=["Focus.","Validate.","Document.","Reproduce.","Verify.","Speak."];
+const NOTES=["Everything I said, exactly as I said it. The blue words are what Flow deletes.","What Wispr Flow wrote when I said it. Same stories, no ums.","The one thing each mistake taught me.","One word per project. That's the whole portfolio."];
+const sec=el=>el.closest('#dial');const dial=document.getElementById('dial'),rows=document.getElementById('drows'),knob=dial.querySelector('.knob'),btns=[...dial.querySelectorAll('.dl button')];
+const dnote=document.getElementById('dnote'),dw=document.getElementById('dwords'),dt=document.getElementById('dtime');
+const esc=x=>x.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const txt=(t,i,l)=>l===0?esc(t.raw).replace(/\{([^}]*)\}/g,'<em class="fl">$1</em>'):l===1?esc(t.flowed):l===2?esc(t.lesson):ONE[i];
+TAKES.forEach((t,i)=>{const r=document.createElement('div');r.className='drow';r.innerHTML=`<span class="pn">${String(i+1).padStart(2,'0')} · ${t.proj}</span><span class="tx"></span>`;rows.appendChild(r)});
+const txs=[...rows.querySelectorAll('.tx')];let cur=-1;
+function set(l,anim){if(l===cur)return;cur=l;dial.dataset.l=l;btns.forEach(b=>b.setAttribute('aria-checked',+b.dataset.l===l));knob.style.transform=`translateX(${l*100}%)`;
+  let words=0;TAKES.forEach((t,i)=>{const h=txt(t,i,l);words+=h.replace(/<[^>]+>/g,'').split(/\s+/).filter(Boolean).length;
+    const el=txs[i];if(!anim||reduce){el.innerHTML=h;return}
+    gsap.timeline().to(el,{opacity:0,y:-10,filter:'blur(6px)',duration:.22,delay:i*.04,ease:'power2.in'}).add(()=>{el.innerHTML=h}).to(el,{opacity:1,y:0,filter:'blur(0px)',duration:.5,ease:'expo.out'})});
+  dnote.textContent=NOTES[l];
+  const to={v:+dw.textContent||0};gsap.to(to,{v:words,duration:.7,ease:'power2.out',onUpdate:()=>{dw.textContent=Math.round(to.v);const s=Math.max(1,Math.round(to.v/4));dt.textContent=s>=60?`${Math.floor(s/60)}m ${s%60}s`:s+'s'}});
+  ScrollTrigger.refresh()}
+btns.forEach(b=>b.addEventListener('click',()=>set(+b.dataset.l,true)));
+dial.querySelector('.dl').addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();const l=Math.max(0,Math.min(3,cur+(e.key==='ArrowRight'?1:-1)));set(l,true);btns[l].focus()}});
+set(1,false);
+})();
 
 /* ---------- the tape: real waveform of all six notes, pauses marked ---------- */
 (()=>{
