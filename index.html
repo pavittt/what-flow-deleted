@@ -39,7 +39,7 @@ html.lenis,html.lenis body{height:auto}
 main{position:relative;z-index:1}
 
 /* preloader */
-#pre{position:fixed;inset:0;z-index:50;background:var(--ink);color:var(--paper);display:flex;flex-direction:column;justify-content:space-between;
+#pre{display:none!important;position:fixed;inset:0;z-index:50;background:var(--ink);color:var(--paper);display:flex;flex-direction:column;justify-content:space-between;
   padding-block:calc(22px + env(safe-area-inset-top,0px)) calc(22px + env(safe-area-inset-bottom,0px))}
 #pre .top{display:flex;justify-content:space-between;gap:16px}
 #pre .num{font:800 clamp(120px,30vw,420px)/.8 var(--display);letter-spacing:-.06em;font-variant-numeric:tabular-nums}
@@ -559,7 +559,7 @@ function deleteUms(){
 }
 document.getElementById('ibtn').addEventListener('click',()=>{document.querySelector('.ibtns').style.visibility='hidden';icap.textContent='Listening to my real voice note, unedited.';clip(deleteUms,iws)});
 document.getElementById('iskip').addEventListener('click',leave);
-if(reduce){pre.remove();}
+pre.remove();if(!reduce)heroIn();
 /* the mic replays the clip */
 document.getElementById('micbtn').addEventListener('click',()=>{if(ia){ia.pause();ia=null;window.__lvl=null;B.sT=.68;return}B.sT=.82;clip(()=>{B.sT=.68})});
 
