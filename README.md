@@ -6,4 +6,4 @@ Wispr Flow deletes the "um"s. This site is about what was in them: six projects,
 
 Plain HTML, GSAP + ScrollTrigger, Lenis and three.js. No build step.
 
-Live site: https://pavittt.github.io/what-flow-deleted/
+Live: https://pavittt.github.io/what-flow-deleted/
